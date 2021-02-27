@@ -8,7 +8,7 @@ import (
 	"github.com/goccy/go-graphviz"
 )
 
-func DrawGraph(text string) {
+func DrawGraph(renpyGraph RenpyGraph) {
 	g := graphviz.New()
 	graph, err := g.Graph()
 	if err != nil {
@@ -20,19 +20,31 @@ func DrawGraph(text string) {
 		}
 		g.Close()
 	}()
-	n, err := graph.CreateNode("n")
-	if err != nil {
-		log.Fatal(err)
+
+	// Draw nodes
+	for index, node := range renpyGraph.node {
+		renpyGraph.node[index].vizNode, err = graph.CreateNode(node.name)
+		if err != nil {
+			log.Fatal(err)
+		}
+		println(node.vizNode)
+
 	}
-	m, err := graph.CreateNode("m")
-	if err != nil {
-		log.Fatal(err)
+
+	fmt.Println(" YOOOO", renpyGraph)
+	println("edges")
+
+	for _, nodeParent := range renpyGraph.node {
+		println(nodeParent.vizNode)
+		for _, nodeChild := range nodeParent.neighbors {
+			e, err := graph.CreateEdge("jump", nodeParent.vizNode, renpyGraph.node[nodeChild].vizNode)
+			if err != nil {
+				log.Fatal(err)
+			}
+			e.SetLabel("jump")
+
+		}
 	}
-	e, err := graph.CreateEdge("e", n, m)
-	if err != nil {
-		log.Fatal(err)
-	}
-	e.SetLabel("e")
 
 	var buf bytes.Buffer
 	if err := g.Render(graph, "dot", &buf); err != nil {

@@ -8,7 +8,7 @@ import (
 )
 
 // FileHandler opens all renpy files and transform them into a string
-func FileHandler(rootPath string) string {
+func FileHandler(rootPath string) []string {
 
 	files, err := WalkMatch(rootPath, "*.rpy")
 	if err != nil {
@@ -16,7 +16,7 @@ func FileHandler(rootPath string) string {
 	}
 	println(files)
 
-	var fileTextLines string
+	var fileTextLines []string
 
 	for _, file := range files {
 		readFile, err := os.Open(file)
@@ -29,7 +29,7 @@ func FileHandler(rootPath string) string {
 		fileScanner.Split(bufio.ScanLines)
 
 		for fileScanner.Scan() {
-			fileTextLines += fileScanner.Text() + "\n"
+			fileTextLines = append(fileTextLines, fileScanner.Text())
 		}
 
 		readFile.Close()

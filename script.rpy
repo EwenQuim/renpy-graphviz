@@ -11,14 +11,14 @@ image darkv sabre = "darth.png"
 define d = Character('Dark Vador', color="#c8ffc8")
 
 
-label accord:
+    label accord:
     d "Ensemble, nous règnerons sur la Galaxie!."
     jump finale
 
-label sur:
+  label sur:
     d "Puisque je te le dis..."
     jump finale
 
-label finale:
+    label finale:
     d "Tu connaîtras la suite... quand tu l'auras écrite!"
     return

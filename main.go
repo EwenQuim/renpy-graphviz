@@ -9,8 +9,8 @@ func main() {
 
 	println(text)
 
-	ParseRenPy(text)
+	g := ParseRenPy(text)
 
-	// DrawGraph(tree)
+	DrawGraph(g)
 
 }
