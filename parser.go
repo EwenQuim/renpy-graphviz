@@ -8,6 +8,10 @@ import (
 
 func ParseRenPy(text []string) RenpyGraph {
 	g := NewGraph()
+	println("ok")
+
+	g.PrettyPrint()
+	println("ok")
 
 	var lastLabel string
 
@@ -23,11 +27,8 @@ func ParseRenPy(text []string) RenpyGraph {
 			lastLabel = labelName
 			println("===== LABEL", labelName)
 
-			g = g.AddNode(labelName)
+			g.AddNode(labelName)
 		}
-
-	}
-	for _, line := range text {
 
 		matchesJump, err := regexp.MatchString(`^\s*jump `, line)
 		if err != nil {
@@ -38,11 +39,12 @@ func ParseRenPy(text []string) RenpyGraph {
 			jumpName = jumpName[5:]
 
 			println("===== JUMP", lastLabel, jumpName)
-			g = g.AddEdge(lastLabel, jumpName)
+			g.AddEdge(lastLabel, jumpName)
 		}
 
 	}
 
-	fmt.Println(g)
+	println("===== END")
+
 	return g
 }

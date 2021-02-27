@@ -25,5 +25,10 @@ func PlugCLI() []string {
 
 	flag.Parse()
 
-	return flag.Args()
+	if len(flag.Args()) == 0 {
+		return []string{"."}
+	} else {
+		return flag.Args()
+	}
+
 }
