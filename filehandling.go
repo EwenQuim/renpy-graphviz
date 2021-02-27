@@ -9,9 +9,9 @@ import (
 )
 
 // FileHandler opens all renpy files and transform them into a string
-func FileHandler(rootPath string) []string {
+func fileHandler(rootPath string) []string {
 
-	files, err := WalkMatch(rootPath, "*.rpy")
+	files, err := walkMatch(rootPath, "*.rpy")
 	if err != nil {
 		log.Fatalf("failed to find root folder: %s", err)
 	}
@@ -31,6 +31,7 @@ func FileHandler(rootPath string) []string {
 		for fileScanner.Scan() {
 			fileTextLines = append(fileTextLines, fileScanner.Text())
 		}
+		fileTextLines = append(fileTextLines, "# renpy-graphviz: BREAK")
 
 		readFile.Close()
 	}
@@ -38,7 +39,7 @@ func FileHandler(rootPath string) []string {
 	return fileTextLines
 }
 
-func WalkMatch(root, pattern string) ([]string, error) {
+func walkMatch(root, pattern string) ([]string, error) {
 	var matches []string
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -60,7 +61,7 @@ func WalkMatch(root, pattern string) ([]string, error) {
 	return matches, nil
 }
 
-func WriteFile(filename, content string) {
+func writeFile(filename, content string) {
 	f, err := os.Create(filename)
 	if err != nil {
 		fmt.Println(err)
