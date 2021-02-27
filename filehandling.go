@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -14,7 +15,6 @@ func FileHandler(rootPath string) []string {
 	if err != nil {
 		log.Fatalf("failed to find root folder: %s", err)
 	}
-	println(files)
 
 	var fileTextLines []string
 
@@ -58,4 +58,24 @@ func WalkMatch(root, pattern string) ([]string, error) {
 		return nil, err
 	}
 	return matches, nil
+}
+
+func WriteFile(filename, content string) {
+	f, err := os.Create(filename)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	l, err := f.WriteString(content)
+	if err != nil {
+		fmt.Println(err)
+		f.Close()
+		return
+	}
+	fmt.Println(l, "bytes written successfully")
+	err = f.Close()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 }

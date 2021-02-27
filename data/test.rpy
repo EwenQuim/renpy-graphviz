@@ -7,7 +7,7 @@ label start:
 
 menu:
     "Ah! D'accord, si vous le dites...":
-         jump accord
+         jump routeone
 
     "Vous êtes sûr?":
-         jump sur
+         jump route2

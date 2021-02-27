@@ -1,47 +1,26 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"log"
 
-	"github.com/goccy/go-graphviz"
+	"github.com/emicklei/dot"
 )
 
-func (g RenpyGraph) DrawGraph(filename string) {
+func (g RenpyGraph) MakeGraph() {
 
-	var buf bytes.Buffer
-	if err := g.graphviz.Render(g.drawing, "dot", &buf); err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(buf.String())
+	fmt.Println(g.graphviz.String())
 
-	// 3. write to file directly
-	if err := g.graphviz.RenderFilename(g.drawing, graphviz.PNG, filename); err != nil {
-		log.Fatal(err)
-	}
+	WriteFile("test.gv", g.graphviz.String())
+
 }
 
-func (g *RenpyGraph) DrawNodes() {
+func kkk() {
+	g := dot.NewGraph(dot.Directed)
+	n1 := g.Node("coding")
+	n2 := g.Node("testing a little").Box()
 
-	for _, node := range g.node {
-		g.drawing.CreateNode(node.name)
+	g.Edge(n1, n2)
+	g.Edge(n2, n1, "back").Attr("color", "red")
 
-	}
-}
-
-func (g *RenpyGraph) DrawEdges() {
-
-	for _, nodeParent := range g.node {
-		for _, nodeChild := range nodeParent.neighbors {
-			e, err := g.drawing.CreateEdge("jump", nodeParent.vizNode, g.node[nodeChild].vizNode)
-			if err != nil {
-				log.Fatal(err)
-			}
-			e.SetLabel("jump")
-
-			print(e)
-
-		}
-	}
+	fmt.Println(g.String())
 }

@@ -3,61 +3,55 @@ package main
 import (
 	"fmt"
 	"hash/fnv"
-	"log"
 
-	"github.com/goccy/go-graphviz"
-	"github.com/goccy/go-graphviz/cgraph"
+	"github.com/emicklei/dot"
 )
 
 type Node struct {
 	name      string
 	neighbors []int
-	vizNode   *cgraph.Node
+	repr      dot.Node
 }
 
 type RenpyGraph struct {
-	node     map[int]*Node
-	graphviz *graphviz.Graphviz
-	drawing  *cgraph.Graph
+	nodes    map[int]*Node
+	graphviz *dot.Graph
 }
 
 func NewGraph() RenpyGraph {
-	graphViz := graphviz.New()
-	drawingGraph, err := graphViz.Graph()
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer func() {
-		if err := drawingGraph.Close(); err != nil {
-			log.Fatal(err)
-		}
-		graphViz.Close()
-	}()
-	return RenpyGraph{node: make(map[int]*Node), graphviz: graphViz, drawing: drawingGraph}
+	g := dot.NewGraph(dot.Directed)
+	return RenpyGraph{nodes: make(map[int]*Node), graphviz: g}
 }
 
 func (g RenpyGraph) PrettyPrint() {
-	fmt.Println("okkkkkkkk")
-	fmt.Printf("%+v", g)
-	fmt.Printf("%+v", g.drawing)
-	fmt.Printf("%+v", g.graphviz)
+	fmt.Println("\n====== Ren'Py Graph debug")
+	fmt.Printf("%+v\n", g)
 
-	for node := range g.node {
-		fmt.Println(node, *g.node[node])
+	for node := range g.nodes {
+		fmt.Println(node, *g.nodes[node])
 	}
+	fmt.Println("=============")
+
 }
 
 func (g *RenpyGraph) AddNode(label string) {
 	// fmt.Println("adding ", label, "to", g)
+	_, ok := g.nodes[Hash(label)]
+	if !ok {
+		nodeGraph := g.graphviz.Node(label).Box()
 
-	g.node[Hash(label)] = &Node{name: label, neighbors: make([]int, 0)}
+		g.nodes[Hash(label)] = &Node{name: label, neighbors: make([]int, 0), repr: nodeGraph}
+	}
 
 }
 
 func (g *RenpyGraph) AddEdge(labelFrom, labelTo string) {
-	// fmt.Println("adding ", label, "to", g)
+	// fmt.Println(g.nodes[Hash(labelFrom)])
+	// fmt.Println(g.nodes[Hash(labelTo)])
 
-	g.node[Hash(labelFrom)].neighbors = append(g.node[Hash(labelFrom)].neighbors, Hash(labelTo))
+	g.graphviz.Edge(g.nodes[Hash(labelFrom)].repr, g.nodes[Hash(labelTo)].repr)
+
+	g.nodes[Hash(labelFrom)].neighbors = append(g.nodes[Hash(labelFrom)].neighbors, Hash(labelTo))
 
 }
 

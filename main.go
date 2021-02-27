@@ -6,30 +6,17 @@ import (
 )
 
 func main() {
-	defer track(runningtime("drawing"))
+	//defer track(runningtime("drawing"))
 
 	path := PlugCLI()
 
-	println(path)
-
 	text := FileHandler(path[0])
-
-	println(text)
 
 	g := ParseRenPy(text)
 
-	g.PrettyPrint()
+	// g.PrettyPrint()
 
-	g.DrawNodes()
-
-	//njbhibhub
-	g.DrawEdges()
-
-	for node := range g.node {
-		fmt.Println(node, *g.node[node])
-	}
-
-	g.DrawGraph("test.png")
+	g.MakeGraph()
 
 }
 

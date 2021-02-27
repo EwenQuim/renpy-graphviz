@@ -1,0 +1,12 @@
+digraph  {
+	
+	n4[label="final",shape="box"];
+	n3[label="route2",shape="box"];
+	n2[label="routeone",shape="box"];
+	n1[label="start",shape="box"];
+	n3->n4;
+	n2->n4;
+	n1->n2;
+	n1->n3;
+	
+}
