@@ -1,26 +1,22 @@
 package main
 
 import (
-	"fmt"
+	"bytes"
+	"log"
 
-	"github.com/emicklei/dot"
+	"github.com/goccy/go-graphviz"
 )
 
-func (g RenpyGraph) MakeGraph() {
+func (g RenpyGraph) makeGraph() {
 
-	fmt.Println(g.graphviz.String())
+	if err := g.graphviz.RenderFilename(g.graph, graphviz.PNG, "renpy-graphviz.png"); err != nil {
+		log.Fatal(err)
+	}
 
-	WriteFile("test.gv", g.graphviz.String())
+	var buf bytes.Buffer
+	if err := g.graphviz.Render(g.graph, "dot", &buf); err != nil {
+		log.Fatal(err)
+	}
+	// fmt.Println(buf.String())
 
-}
-
-func kkk() {
-	g := dot.NewGraph(dot.Directed)
-	n1 := g.Node("coding")
-	n2 := g.Node("testing a little").Box()
-
-	g.Edge(n1, n2)
-	g.Edge(n2, n1, "back").Attr("color", "red")
-
-	fmt.Println(g.String())
 }
