@@ -31,6 +31,7 @@ func FileHandler(rootPath string) []string {
 		for fileScanner.Scan() {
 			fileTextLines = append(fileTextLines, fileScanner.Text())
 		}
+		fileTextLines = append(fileTextLines, "FILESTOP")
 
 		readFile.Close()
 	}

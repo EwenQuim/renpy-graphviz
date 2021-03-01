@@ -45,13 +45,11 @@ func (g *RenpyGraph) AddNode(label string) {
 
 }
 
-func (g *RenpyGraph) AddEdge(labelFrom, labelTo string) {
-	// fmt.Println(g.nodes[Hash(labelFrom)])
-	// fmt.Println(g.nodes[Hash(labelTo)])
+func (g *RenpyGraph) AddEdge(label ...string) {
 
-	g.graphviz.Edge(g.nodes[Hash(labelFrom)].repr, g.nodes[Hash(labelTo)].repr)
+	g.graphviz.Edge(g.nodes[Hash(label[0])].repr, g.nodes[Hash(label[1])].repr).Label(label[2])
 
-	g.nodes[Hash(labelFrom)].neighbors = append(g.nodes[Hash(labelFrom)].neighbors, Hash(labelTo))
+	g.nodes[Hash(label[0])].neighbors = append(g.nodes[Hash(label[0])].neighbors, Hash(label[1]))
 
 }
 

@@ -1,6 +1,8 @@
 # Ren'Py graph vizualiser
 
-This is a program written in Go that allows you to visualise you VN.
+[![Go Reference](https://pkg.go.dev/badge/github.com/ewenquim/renpy-graphviz.svg)](https://pkg.go.dev/github.com/ewenquim/renpy-graphviz) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ewenquim/renpy-graphviz/Distribute%20executable)
+
+This is a program written in Go that allows you to visualise the routes of your story.
 
 ![](./truc.png)
 
