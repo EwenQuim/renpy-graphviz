@@ -3,6 +3,8 @@ name: Distribute executable
 on:
   push:
     branches: [master]
+    tags:
+      - "*"
   pull_request:
     branches: [master]
 
@@ -17,14 +19,24 @@ jobs:
         with:
           go-version: 1.15
 
-      - name: Build
-        run: |
-          go build -v ./...
-          mkdir build
-          mv renpy-graphviz build
-
       - name: Test
         run: go test -v ./...
+
+      - name: Build Linux
+        run: |
+          mkdir build 
+          go build -o build/renpy-graphviz-linux -v ./...
+
+      - name: Build MacOS
+        run: |
+          env CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o build/renpy-graphviz-macos -v ./...
+
+      - name: Build Windows
+        run: |
+          env CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o build/renpy-graphviz-windows.exe -v ./...
+          ls -a
+          cd build
+          ls -a
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.2.2
