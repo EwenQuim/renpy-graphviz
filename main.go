@@ -1,3 +1,6 @@
+/*
+This package helps understand a Ren'Py source code by drawing a graph from the source code
+*/
 package main
 
 import (

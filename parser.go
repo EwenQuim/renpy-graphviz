@@ -12,7 +12,7 @@ const (
 	Begin    Situation = "Begins"
 	Label    Situation = "Label"    // if the first value in a constant block is `iota`
 	Jump     Situation = "Jump"     // Go will automatically increment the rest for you.
-	Filestop Situation = "Filestop" // so here, Right = 3
+	Flowstop Situation = "Flowstop" // so here, Right = 3
 )
 
 func ParseRenPy(text []string) RenpyGraph {
@@ -20,12 +20,12 @@ func ParseRenPy(text []string) RenpyGraph {
 
 	var lastLabel string
 
-	last := Begin
+	context := Begin
 
 	for _, line := range text {
 
-		if line == "FILESTOP" {
-			last = Situation(Filestop)
+		if matchesLabel, _ := regexp.MatchString(`renpy-graphviz.*BREAK`, line); matchesLabel {
+			context = Situation(Flowstop)
 		}
 		// Label keyword
 		matchesLabel, err := regexp.MatchString(`^\s*label .*:`, line)
@@ -34,16 +34,23 @@ func ParseRenPy(text []string) RenpyGraph {
 		}
 		if matchesLabel {
 			labelName := strings.TrimSpace(line)
-			labelName = labelName[6 : len(labelName)-1]
+			ignorelabelLabel, err := regexp.MatchString(`renpy-graphviz.*IGNORE`, line)
+			if err != nil {
+				fmt.Println(err)
+			}
+			if !ignorelabelLabel {
+				labelName = labelName[6 : len(labelName)-1]
 
-			g.AddNode(labelName)
+				g.AddNode(labelName)
 
-			if lastLabel != "" && last == Situation(Label) {
-				g.AddEdge(lastLabel, labelName, "label")
+				if lastLabel != "" && context == Situation(Label) {
+					g.AddEdge(lastLabel, labelName, "label")
+				}
+
+				lastLabel = labelName
+				context = Situation(Label)
 			}
 
-			lastLabel = labelName
-			last = Situation(Label)
 		}
 
 		// Jump keyword
@@ -58,9 +65,9 @@ func ParseRenPy(text []string) RenpyGraph {
 			g.AddNode(jumpName)
 
 			g.AddEdge(lastLabel, jumpName, "jump")
-			last = Situation(Jump)
+			context = Situation(Jump)
 		}
-		println(last)
+
 	}
 
 	return g
