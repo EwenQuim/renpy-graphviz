@@ -1,13 +1,23 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"log"
+
+	"github.com/goccy/go-graphviz"
 )
 
 func (g RenpyGraph) MakeGraph() {
 
-	fmt.Println(g.graphviz.String())
+	if err := g.graphviz.RenderFilename(g.graph, graphviz.PNG, "renpy-graphviz.png"); err != nil {
+		log.Fatal(err)
+	}
 
-	WriteFile("test.gv", g.graphviz.String())
+	var buf bytes.Buffer
+	if err := g.graphviz.Render(g.graph, "dot", &buf); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(buf.String())
 
 }
