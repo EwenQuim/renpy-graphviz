@@ -83,7 +83,10 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	edge.SetLabel(label[2])
+
+	if tags.lowLink {
+		edge.SetStyle("dotted")
+	}
 
 	parentNode.neighbors = append(parentNode.neighbors, hash(label[1]))
 

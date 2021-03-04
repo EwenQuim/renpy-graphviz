@@ -23,6 +23,7 @@ type Tag struct {
 	ignore    bool
 	title     bool
 	breakFlow bool
+	lowLink   bool
 }
 
 // Context gives information about the state of the current line of the script
@@ -48,12 +49,14 @@ func parseRenPy(text []string) RenpyGraph {
 		case situationLabel:
 			g.AddNode(context.tags, context.currentLabel)
 			if context.linkedToLastLabel {
-				g.AddEdge(context.tags, context.lastLabel, context.currentLabel, "label")
+				context.tags.lowLink = true
+				g.AddEdge(context.tags, context.lastLabel, context.currentLabel)
+				context.tags.lowLink = false
 			}
 		case situationJump:
 			g.AddNode(context.tags, context.currentLabel)
 
-			g.AddEdge(context.tags, context.lastLabel, context.currentLabel, "")
+			g.AddEdge(context.tags, context.lastLabel, context.currentLabel)
 		}
 
 	}
