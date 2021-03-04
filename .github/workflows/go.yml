@@ -23,9 +23,7 @@ jobs:
         run: go test -v ./...
 
       - name: Build Linux
-        run: |
-          mkdir build 
-          go build -o build/renpy-graphviz-linux -v ./...
+        run: go build -o build/renpy-graphviz-linux -v ./...
 
       - name: Release
         uses: fnkr/github-action-ghr@v1
