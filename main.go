@@ -13,9 +13,9 @@ func main() {
 
 	path := PlugCLI()
 
-	text := FileHandler(path[0])
+	text := fileHandler(path[0])
 
-	g := ParseRenPy(text)
+	g := parseRenPy(text)
 
 	// g.PrettyPrint()
 

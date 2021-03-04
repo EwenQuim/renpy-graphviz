@@ -1,6 +1,8 @@
 # Ren'Py graph vizualiser
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/ewenquim/renpy-graphviz.svg)](https://pkg.go.dev/github.com/ewenquim/renpy-graphviz) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ewenquim/renpy-graphviz/Distribute%20executable)
+[![Go Reference](https://pkg.go.dev/badge/github.com/ewenquim/renpy-graphviz.svg)](https://pkg.go.dev/github.com/ewenquim/renpy-graphviz)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ewenquim/renpy-graphviz)](https://goreportcard.com/report/github.com/ewenquim/renpy-graphviz)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ewenquim/renpy-graphviz/Distribute%20executable)
 
 This is a program written in Go that allows you to visualise the routes of your story.
 
