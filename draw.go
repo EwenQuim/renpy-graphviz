@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 
 	"github.com/goccy/go-graphviz"
@@ -18,6 +17,6 @@ func (g RenpyGraph) makeGraph() {
 	if err := g.graphviz.Render(g.graph, "dot", &buf); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(buf.String())
+	// fmt.Println(buf.String())
 
 }

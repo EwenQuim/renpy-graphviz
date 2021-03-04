@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 )
@@ -81,16 +80,13 @@ func (context *Context) update(line string) {
 			// LABEL
 			labelName := r.FindStringSubmatch(line)[1]
 
-			fmt.Println("LABEEEL", labelName)
 			context.currentLabel = labelName
 			context.currentSituation = situationLabel
 
 		} else if r, _ := regexp.Compile(`^\s*jump ([a-zA-Z0-9_-]+)\s*(?:#.*)?$`); r.MatchString(line) {
 			// JUMP
-
 			labelName := r.FindStringSubmatch(line)[1]
 
-			fmt.Println("JUUUUMP", labelName)
 			context.currentLabel = labelName
 			context.currentSituation = situationJump
 			context.linkedToLastLabel = false

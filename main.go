@@ -25,12 +25,11 @@ func main() {
 
 // Runningtime computes running time
 func runningtime(s string) (string, time.Time) {
-	fmt.Println("Start: ", s)
 	return s, time.Now()
 }
 
 // Track is this
 func track(s string, startTime time.Time) {
 	endTime := time.Now()
-	fmt.Println("End:   ", s, "took", endTime.Sub(startTime))
+	fmt.Println(s, "took", endTime.Sub(startTime))
 }
