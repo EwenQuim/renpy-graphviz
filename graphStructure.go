@@ -55,22 +55,25 @@ func (g RenpyGraph) PrettyPrint() {
 // AddNode to the ren'py graph, ignore if label already exists
 func (g *RenpyGraph) AddNode(tags Tag, label string) {
 	// fmt.Println("adding ", label, "to", g)
+	labelName := strings.Replace(label, "_", " ", -1)
+
 	_, ok := g.nodes[hash(label)]
 	if !ok {
 		nodeGraph, err := g.graph.CreateNode(label)
 		if err != nil {
 			log.Fatal(err)
 		}
-		if tags.title {
-			nodeGraph.SetShape(cgraph.BoxShape).SetLabel(strings.ToUpper(label))
-		}
+		nodeGraph.SetLabel(labelName)
 
 		g.nodes[hash(label)] = &Node{name: label, neighbors: make([]int, 0), repr: nodeGraph}
+	}
+	if tags.title {
+		g.nodes[hash(label)].repr.SetShape(cgraph.BoxShape).SetLabel(strings.ToUpper(labelName))
 	}
 
 }
 
-// AddEdge to the repy graph
+// AddEdge to the renpy graph
 func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 
 	parentNode := g.nodes[hash(label[0])]
