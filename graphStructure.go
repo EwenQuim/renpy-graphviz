@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"log"
+	"strings"
 
 	"github.com/goccy/go-graphviz"
 	"github.com/goccy/go-graphviz/cgraph"
@@ -52,13 +53,16 @@ func (g RenpyGraph) PrettyPrint() {
 }
 
 // AddNode to the ren'py graph, ignore if label already exists
-func (g *RenpyGraph) AddNode(label string) {
+func (g *RenpyGraph) AddNode(tags Tag, label string) {
 	// fmt.Println("adding ", label, "to", g)
 	_, ok := g.nodes[hash(label)]
 	if !ok {
 		nodeGraph, err := g.graph.CreateNode(label)
 		if err != nil {
 			log.Fatal(err)
+		}
+		if tags.title {
+			nodeGraph.SetShape(cgraph.BoxShape).SetLabel(strings.ToUpper(label))
 		}
 
 		g.nodes[hash(label)] = &Node{name: label, neighbors: make([]int, 0), repr: nodeGraph}
@@ -67,7 +71,7 @@ func (g *RenpyGraph) AddNode(label string) {
 }
 
 // AddEdge to the repy graph
-func (g *RenpyGraph) AddEdge(label ...string) {
+func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 
 	parentNode := g.nodes[hash(label[0])]
 	childrenNode := g.nodes[hash(label[1])]

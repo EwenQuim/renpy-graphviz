@@ -40,26 +40,21 @@ func parseRenPy(text []string) RenpyGraph {
 	g := NewGraph()
 
 	context := Context{}
-	fmt.Printf("%+v\n", context)
 
 	for _, line := range text {
-		println("\n\n--------------")
 
-		fmt.Println(line)
 		context.update(line)
-
-		fmt.Printf("%+v\n", context)
 
 		switch context.currentSituation {
 		case situationLabel:
-			g.AddNode(context.currentLabel)
+			g.AddNode(context.tags, context.currentLabel)
 			if context.linkedToLastLabel {
-				g.AddEdge(context.lastLabel, context.currentLabel, "label")
+				g.AddEdge(context.tags, context.lastLabel, context.currentLabel, "label")
 			}
 		case situationJump:
-			g.AddNode(context.currentLabel)
+			g.AddNode(context.tags, context.currentLabel)
 
-			g.AddEdge(context.lastLabel, context.currentLabel, "")
+			g.AddEdge(context.tags, context.lastLabel, context.currentLabel, "")
 		}
 
 	}

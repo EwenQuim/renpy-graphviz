@@ -1,5 +1,5 @@
 # Le jeu commence ici
-label start:
+label staAA_aa6rt     : # renpy-graphviz: TiTlE
     scene bg bespin
     show darkv sabre
     play music "imperial_march.mp3"
@@ -7,7 +7,10 @@ label start:
 
 menu:
     "Ah! D'accord, si vous le dites...":
-         jump routeone
+         jump routeone1
 
     "Vous êtes sûr?":
          jump route2
+
+    "More":
+        jump routeAlternative # comments do nothing

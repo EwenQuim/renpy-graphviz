@@ -12,13 +12,19 @@ image darkv sabre = "darth.png"
 define d = Character('Dark Vador', color="#c8ffc8")
 
 
-label routeone: # renpy-graphviz TITLE
+label routeone1 : 
     d "Ensemble, nous règnerons sur la Galaxie!."
-    jump final
+    if this:
+        jump final
+    else:
+        d "aussi"
+
+label routeAlternative:
+    d "Petite histoire avant d'aller sur la route2"
 
 label route2:
     d "Puisque je te le dis..."
-    jump final
+    
 
 label final:
     d "Tu connaîtras la suite... quand tu l'auras écrite!"
