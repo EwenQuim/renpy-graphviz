@@ -16,20 +16,26 @@ type Node struct {
 	repr      *cgraph.Node
 }
 
-// The graph of Ren'Py story structure
+// RenpyGraph is the graph of Ren'Py story structure
 type RenpyGraph struct {
 	nodes    map[int]*Node
 	graphviz *graphviz.Graphviz
 	graph    *cgraph.Graph
 }
 
-//
+// NewGraph creates a new graph
 func NewGraph() RenpyGraph {
 	g := graphviz.New()
 	graph, err := g.Graph()
 	if err != nil {
 		log.Fatal(err)
 	}
+	c := graph.SubGraph("cluster_", 3)
+
+	c.CreateNode("t")
+	c.CreateNode("u")
+	c.SetStyle(cgraph.DashedGraphStyle)
+
 	return RenpyGraph{nodes: make(map[int]*Node), graphviz: g, graph: graph}
 }
 
@@ -45,7 +51,7 @@ func (g RenpyGraph) PrettyPrint() {
 
 }
 
-// AddNode to the ren'py graph
+// AddNode to the ren'py graph, ignore if label already exists
 func (g *RenpyGraph) AddNode(label string) {
 	// fmt.Println("adding ", label, "to", g)
 	_, ok := g.nodes[hash(label)]
@@ -63,13 +69,16 @@ func (g *RenpyGraph) AddNode(label string) {
 // AddEdge to the repy graph
 func (g *RenpyGraph) AddEdge(label ...string) {
 
-	edge, err := g.graph.CreateEdge(g.nodes[hash(label[0])].name+g.nodes[hash(label[1])].name, g.nodes[hash(label[0])].repr, g.nodes[hash(label[1])].repr)
+	parentNode := g.nodes[hash(label[0])]
+	childrenNode := g.nodes[hash(label[1])]
+
+	edge, err := g.graph.CreateEdge(parentNode.name+childrenNode.name, parentNode.repr, childrenNode.repr)
 	if err != nil {
 		log.Fatal(err)
 	}
 	edge.SetLabel(label[2])
 
-	g.nodes[hash(label[0])].neighbors = append(g.nodes[hash(label[0])].neighbors, hash(label[1]))
+	parentNode.neighbors = append(parentNode.neighbors, hash(label[1]))
 
 }
 

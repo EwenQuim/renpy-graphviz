@@ -9,66 +9,139 @@ import (
 type situation string
 
 const (
-	situationBegin    situation = "Begins"
-	situationLabel    situation = "Label"
-	situationJump     situation = "Jump"
-	situationFlowstop situation = "Flowstop"
+	attrIgnore string = "IGNORE"
+	attrTitle  string = "TITLE"
+	attrBreak  string = "BREAK"
 )
+
+const (
+	situationJump    situation = "jump"
+	situationLabel   situation = "label"
+	situationPending situation = ""
+)
+
+type Tag struct {
+	ignore    bool
+	title     bool
+	breakFlow bool
+}
+
+// Context gives information about the state of the current line of the script
+type Context struct {
+	currentSituation  situation // current line situation : jump or label ?
+	currentLabel      string    // current line label. Empty if keyword is `situationPending`
+	linkedToLastLabel bool      // follows a label or not ?
+	lastLabel         string    // last label encountered. Empty if not linkedToLastLabel
+	tags              Tag
+	currentFile       string
+}
 
 func parseRenPy(text []string) RenpyGraph {
 	g := NewGraph()
 
-	var lastLabel string
-
-	context := situationBegin
+	context := Context{}
+	fmt.Printf("%+v\n", context)
 
 	for _, line := range text {
+		println("\n\n--------------")
 
-		if matchesLabel, _ := regexp.MatchString(`renpy-graphviz.*BREAK`, line); matchesLabel {
-			context = situationFlowstop
-		}
-		// Label keyword
-		matchesLabel, err := regexp.MatchString(`^\s*label .*:`, line)
-		if err != nil {
-			fmt.Println(err)
-		}
-		if matchesLabel {
-			labelName := strings.TrimSpace(line)
-			ignorelabelLabel, err := regexp.MatchString(`renpy-graphviz.*IGNORE`, line)
-			if err != nil {
-				fmt.Println(err)
+		fmt.Println(line)
+		context.update(line)
+
+		fmt.Printf("%+v\n", context)
+
+		switch context.currentSituation {
+		case situationLabel:
+			g.AddNode(context.currentLabel)
+			if context.linkedToLastLabel {
+				g.AddEdge(context.lastLabel, context.currentLabel, "label")
 			}
-			if !ignorelabelLabel {
-				labelName = labelName[6 : len(labelName)-1]
+		case situationJump:
+			g.AddNode(context.currentLabel)
 
-				g.AddNode(labelName)
-
-				if lastLabel != "" && context == situationLabel {
-					g.AddEdge(lastLabel, labelName, "label")
-				}
-
-				lastLabel = labelName
-				context = situationLabel
-			}
-
-		}
-
-		// Jump keyword
-		matchesJump, err := regexp.MatchString(`^\s*jump `, line)
-		if err != nil {
-			fmt.Println(err)
-		}
-		if matchesJump {
-
-			jumpName := strings.TrimSpace(line)
-			jumpName = jumpName[5:]
-			g.AddNode(jumpName)
-
-			g.AddEdge(lastLabel, jumpName, "")
-			context = situationJump
+			g.AddEdge(context.lastLabel, context.currentLabel, "")
 		}
 
 	}
 
 	return g
+}
+
+func (context *Context) update(line string) {
+	line = strings.TrimSpace(line)
+
+	// Initialises context
+	context.init(line)
+
+	// Handles tags
+	context.handleTags(line)
+
+	// Handles keywords
+	if !context.tags.ignore {
+		if context.tags.breakFlow {
+			context.lastLabel = ""
+			context.linkedToLastLabel = false
+		}
+		if r, _ := regexp.Compile(`^\s*label ([a-zA-Z0-9_-]+)\s*:\s*(?:#.*)?$`); r.MatchString(line) {
+			// LABEL
+			labelName := r.FindStringSubmatch(line)[1]
+
+			fmt.Println("LABEEEL", labelName)
+			context.currentLabel = labelName
+			context.currentSituation = situationLabel
+
+		} else if r, _ := regexp.Compile(`^\s*jump ([a-zA-Z0-9_-]+)\s*(?:#.*)?$`); r.MatchString(line) {
+			// JUMP
+
+			labelName := r.FindStringSubmatch(line)[1]
+
+			fmt.Println("JUUUUMP", labelName)
+			context.currentLabel = labelName
+			context.currentSituation = situationJump
+			context.linkedToLastLabel = false
+		} else if r, _ := regexp.Compile(`^\s*(#.*)?$`); r.MatchString(line) {
+			// COMMENTS
+
+		} else if context.lastLabel != "" {
+			// USUAL VN
+			// a label is available (from before in the file) and we are after a jump that is not followed by comments or a label
+			context.linkedToLastLabel = true
+		}
+	}
+
+}
+
+func (context *Context) init(line string) {
+	// Reset all tags
+	context.tags = Tag{}
+
+	// If last line was a label, say it was the last label
+	// Current value have no meaning now
+	// Refer to `.situation`
+	if context.currentSituation == situationLabel {
+		context.lastLabel = context.currentLabel
+		context.linkedToLastLabel = true
+	}
+	context.currentLabel = ""
+	context.currentSituation = situationPending
+}
+
+func (context *Context) handleTags(line string) {
+	if strings.Contains(line, "renpy-graphviz") {
+		lineStrings := strings.Split(line, "renpy-graphviz")
+		endOfLine := strings.Join(lineStrings[1:], " ") // removes everything before `renpy-graphviz`
+		splitCharacters := regexp.MustCompile(`\W+`)
+		potentialTags := splitCharacters.Split(endOfLine, -1) // separate every word
+
+		for _, tag := range potentialTags { // sorts tags (false is default)
+			switch strings.ToUpper(tag) {
+			case attrIgnore:
+				context.tags.ignore = true
+			case attrTitle:
+				context.tags.title = true
+			case attrBreak:
+				context.tags.breakFlow = true
+			}
+		}
+	}
 }
