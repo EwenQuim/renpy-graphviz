@@ -8,7 +8,7 @@ import (
 	"github.com/goccy/go-graphviz"
 )
 
-func (g RenpyGraph) MakeGraph() {
+func (g RenpyGraph) makeGraph() {
 
 	if err := g.graphviz.RenderFilename(g.graph, graphviz.PNG, "renpy-graphviz.png"); err != nil {
 		log.Fatal(err)

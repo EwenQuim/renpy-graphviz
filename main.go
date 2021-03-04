@@ -19,7 +19,7 @@ func main() {
 
 	// g.PrettyPrint()
 
-	g.MakeGraph()
+	g.makeGraph()
 
 }
 

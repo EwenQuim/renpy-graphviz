@@ -6,12 +6,13 @@
 # Déclarez les personnages utilisés dans le jeu.
 image bg bespin = "bespin.png"
 
+# renpy-graphviz: TITLE
 image darkv sabre = "darth.png"
 
 define d = Character('Dark Vador', color="#c8ffc8")
 
 
-label routeone:
+label routeone: # renpy-graphviz TITLE
     d "Ensemble, nous règnerons sur la Galaxie!."
     jump final
 

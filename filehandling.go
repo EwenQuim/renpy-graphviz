@@ -61,7 +61,7 @@ func walkMatch(root, pattern string) ([]string, error) {
 	return matches, nil
 }
 
-func WriteFile(filename, content string) {
+func writeFile(filename, content string) {
 	f, err := os.Create(filename)
 	if err != nil {
 		fmt.Println(err)
