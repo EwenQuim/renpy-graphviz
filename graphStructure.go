@@ -31,11 +31,6 @@ func NewGraph() RenpyGraph {
 	if err != nil {
 		log.Fatal(err)
 	}
-	c := graph.SubGraph("cluster_", 3)
-
-	c.CreateNode("t")
-	c.CreateNode("u")
-	c.SetStyle(cgraph.DashedGraphStyle)
 
 	return RenpyGraph{nodes: make(map[int]*Node), graphviz: g, graph: graph}
 }
