@@ -9,7 +9,34 @@ on:
     branches: [master]
 
 jobs:
-  build:
+  # Cross-compile
+  xgo:
+    strategy:
+      fail-fast: false
+      matrix:
+        go_version:
+          - 1.16.x
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build with xgo
+        uses: crazy-max/ghaction-xgo@v1
+        with:
+          xgo_version: latest
+          go_version: ${{ matrix.go_version }}
+          dest: build
+          prefix: myapp
+          targets: windows/386,windows/amd64,linux/386,linux/amd64,darwin/386,darwin/amd64
+          v: true
+          x: false
+          race: false
+          ldflags: -s -w
+          buildmode: default
+
+  # tests and Linux build
+  distribute:
+    needs: xgo
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
