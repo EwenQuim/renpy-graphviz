@@ -9,25 +9,11 @@ import (
 type situation string
 
 const (
-	attrIgnore string = "IGNORE"
-	attrTitle  string = "TITLE"
-	attrBreak  string = "BREAK"
-)
-
-const (
 	situationJump    situation = "jump"
 	situationCall    situation = "call"
 	situationLabel   situation = "label"
 	situationPending situation = ""
 )
-
-type Tag struct {
-	ignore    bool
-	title     bool
-	breakFlow bool
-	lowLink   bool
-	callLink  bool
-}
 
 // Context gives information about the state of the current line of the script
 type Context struct {
@@ -74,7 +60,7 @@ func (context *Context) update(line string) {
 	context.init(line)
 
 	// Handles tags
-	context.handleTags(line)
+	context.HandleTags(line)
 
 	// Handles keywords
 	if !context.tags.ignore {
@@ -82,7 +68,7 @@ func (context *Context) update(line string) {
 			context.lastLabel = ""
 			context.linkedToLastLabel = false
 		}
-		if r, _ := regexp.Compile(`^\s*label ([a-zA-Z0-9_()]+)\s*:\s*(?:#.*)?$`); r.MatchString(line) {
+		if r, _ := regexp.Compile(`^\s*label ([a-zA-Z0-9_()-]+)\s*:\s*(?:#.*)?$`); r.MatchString(line) {
 			// LABEL
 			labelName := r.FindStringSubmatch(line)[1]
 
@@ -92,14 +78,14 @@ func (context *Context) update(line string) {
 				context.tags.lowLink = true
 			}
 
-		} else if r, _ := regexp.Compile(`^\s*jump ([a-zA-Z0-9_()]+)\s*(?:#.*)?$`); r.MatchString(line) {
+		} else if r, _ := regexp.Compile(`^\s*jump ([a-zA-Z0-9_()-]+)\s*(?:#.*)?$`); r.MatchString(line) {
 			// JUMP
 			labelName := r.FindStringSubmatch(line)[1]
 
 			context.currentLabel = labelName
 			context.currentSituation = situationJump
 			context.linkedToLastLabel = false
-		} else if r, _ := regexp.Compile(`^\s*call ([a-zA-Z0-9_()]+)\s*(?:#.*)?$`); r.MatchString(line) {
+		} else if r, _ := regexp.Compile(`^\s*call ([a-zA-Z0-9_()-]+)\s*(?:#.*)?$`); r.MatchString(line) {
 			// CALL
 			labelName := r.FindStringSubmatch(line)[1]
 
@@ -109,10 +95,6 @@ func (context *Context) update(line string) {
 			context.tags.callLink = true
 		} else if r, _ := regexp.Compile(`^\s*(#.*)?$`); r.MatchString(line) {
 			// COMMENTS
-
-		} else if r, _ := regexp.Compile(`^\s*return\s*(?:#.*)?$`); r.MatchString(line) {
-			// return statement (after a call for example)
-			context.linkedToLastLabel = false
 
 		} else if context.lastLabel != "" {
 			// USUAL VN
@@ -136,24 +118,4 @@ func (context *Context) init(line string) {
 	}
 	context.currentLabel = ""
 	context.currentSituation = situationPending
-}
-
-func (context *Context) handleTags(line string) {
-	if strings.Contains(line, "renpy-graphviz") {
-		lineStrings := strings.Split(line, "renpy-graphviz")
-		endOfLine := strings.Join(lineStrings[1:], " ") // removes everything before `renpy-graphviz`
-		splitCharacters := regexp.MustCompile(`\W+`)
-		potentialTags := splitCharacters.Split(endOfLine, -1) // separate every word
-
-		for _, tag := range potentialTags { // sorts tags (false is default)
-			switch strings.ToUpper(tag) {
-			case attrIgnore:
-				context.tags.ignore = true
-			case attrTitle:
-				context.tags.title = true
-			case attrBreak:
-				context.tags.breakFlow = true
-			}
-		}
-	}
 }

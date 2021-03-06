@@ -21,6 +21,4 @@ func (g RenpyGraph) makeGraph() {
 	}
 	writeFile("renpy-graphviz.dot", buf.String())
 
-	// fmt.Println(buf.String())
-
 }
