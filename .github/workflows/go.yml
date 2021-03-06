@@ -26,31 +26,13 @@ jobs:
           xgo_version: latest
           go_version: ${{ matrix.go_version }}
           dest: build
-          prefix: myapp
+          prefix: renpy-graphviz
           targets: windows/386,windows/amd64,linux/386,linux/amd64,darwin/386,darwin/amd64
           v: true
           x: false
           race: false
           ldflags: -s -w
           buildmode: default
-
-  # tests and Linux build
-  distribute:
-    needs: xgo
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.15
-
-      - name: Test
-        run: go test -v ./...
-
-      - name: Build Linux
-        run: go build -o build/renpy-graphviz-linux -v ./...
 
       - name: Release
         uses: fnkr/github-action-ghr@v1
