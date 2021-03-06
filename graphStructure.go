@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"log"
+	"regexp"
 	"strings"
 
 	"github.com/goccy/go-graphviz"
@@ -50,7 +51,9 @@ func (g RenpyGraph) PrettyPrint() {
 // AddNode to the ren'py graph, ignore if label already exists
 func (g *RenpyGraph) AddNode(tags Tag, label string) {
 	// fmt.Println("adding ", label, "to", g)
-	labelName := strings.Replace(label, "_", " ", -1)
+	re := regexp.MustCompile("[)_]")
+	labelName := re.ReplaceAllString(label, " ")
+	labelName = strings.Replace(labelName, "(", ": ", 1)
 
 	_, ok := g.nodes[hash(label)]
 	if !ok {
@@ -80,7 +83,9 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 	}
 
 	if tags.lowLink {
-		edge.SetStyle("dotted")
+		edge.SetStyle("dotted").SetColor("darkgreen")
+	} else if tags.callLink {
+		edge.SetStyle("dashed").SetColor("blue")
 	}
 
 	parentNode.neighbors = append(parentNode.neighbors, hash(label[1]))

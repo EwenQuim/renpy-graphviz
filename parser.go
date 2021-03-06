@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -15,6 +16,7 @@ const (
 
 const (
 	situationJump    situation = "jump"
+	situationCall    situation = "call"
 	situationLabel   situation = "label"
 	situationPending situation = ""
 )
@@ -24,6 +26,7 @@ type Tag struct {
 	title     bool
 	breakFlow bool
 	lowLink   bool
+	callLink  bool
 }
 
 // Context gives information about the state of the current line of the script
@@ -37,6 +40,7 @@ type Context struct {
 }
 
 func parseRenPy(text []string) RenpyGraph {
+	fmt.Println("Parsing .rpy files...")
 	g := NewGraph()
 
 	context := Context{}
@@ -46,16 +50,15 @@ func parseRenPy(text []string) RenpyGraph {
 		context.update(line)
 
 		switch context.currentSituation {
+
 		case situationLabel:
 			g.AddNode(context.tags, context.currentLabel)
 			if context.linkedToLastLabel {
-				context.tags.lowLink = true
 				g.AddEdge(context.tags, context.lastLabel, context.currentLabel)
-				context.tags.lowLink = false
 			}
-		case situationJump:
-			g.AddNode(context.tags, context.currentLabel)
 
+		case situationJump, situationCall:
+			g.AddNode(context.tags, context.currentLabel)
 			g.AddEdge(context.tags, context.lastLabel, context.currentLabel)
 		}
 
@@ -79,22 +82,37 @@ func (context *Context) update(line string) {
 			context.lastLabel = ""
 			context.linkedToLastLabel = false
 		}
-		if r, _ := regexp.Compile(`^\s*label ([a-zA-Z0-9_-]+)\s*:\s*(?:#.*)?$`); r.MatchString(line) {
+		if r, _ := regexp.Compile(`^\s*label ([a-zA-Z0-9_()]+)\s*:\s*(?:#.*)?$`); r.MatchString(line) {
 			// LABEL
 			labelName := r.FindStringSubmatch(line)[1]
 
 			context.currentLabel = labelName
 			context.currentSituation = situationLabel
+			if context.linkedToLastLabel {
+				context.tags.lowLink = true
+			}
 
-		} else if r, _ := regexp.Compile(`^\s*jump ([a-zA-Z0-9_-]+)\s*(?:#.*)?$`); r.MatchString(line) {
+		} else if r, _ := regexp.Compile(`^\s*jump ([a-zA-Z0-9_()]+)\s*(?:#.*)?$`); r.MatchString(line) {
 			// JUMP
 			labelName := r.FindStringSubmatch(line)[1]
 
 			context.currentLabel = labelName
 			context.currentSituation = situationJump
 			context.linkedToLastLabel = false
+		} else if r, _ := regexp.Compile(`^\s*call ([a-zA-Z0-9_()]+)\s*(?:#.*)?$`); r.MatchString(line) {
+			// CALL
+			labelName := r.FindStringSubmatch(line)[1]
+
+			context.currentLabel = labelName
+			context.currentSituation = situationLabel
+			context.linkedToLastLabel = true
+			context.tags.callLink = true
 		} else if r, _ := regexp.Compile(`^\s*(#.*)?$`); r.MatchString(line) {
 			// COMMENTS
+
+		} else if r, _ := regexp.Compile(`^\s*return\s*(?:#.*)?$`); r.MatchString(line) {
+			// return statement (after a call for example)
+			context.linkedToLastLabel = false
 
 		} else if context.lastLabel != "" {
 			// USUAL VN
