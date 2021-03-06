@@ -17,9 +17,9 @@ func main() {
 
 	g := parseRenPy(text)
 
-	// g.PrettyPrint()
-
 	g.makeGraph()
+
+	fmt.Println("Done.")
 
 }
 
