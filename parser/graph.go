@@ -1,38 +1,32 @@
-package main
+package parser
 
 import (
 	"fmt"
-	"log"
+	"io/ioutil"
 	"regexp"
 	"strings"
 
-	"github.com/goccy/go-graphviz"
-	"github.com/goccy/go-graphviz/cgraph"
+	"github.com/emicklei/dot"
 )
 
 // A Node is a Ren'Py label and some properties, including its graph representation
 type Node struct {
 	name      string
 	neighbors []string
-	repr      *cgraph.Node
+	repr      *dot.Node
 }
 
 // RenpyGraph is the graph of Ren'Py story structure
 type RenpyGraph struct {
-	nodes    map[string]*Node
-	graphviz *graphviz.Graphviz
-	graph    *cgraph.Graph
+	nodes map[string]*Node
+	graph *dot.Graph
 }
 
 // NewGraph creates a new graph
 func NewGraph() RenpyGraph {
-	g := graphviz.New()
-	graph, err := g.Graph()
-	if err != nil {
-		log.Fatal(err)
-	}
+	g := dot.NewGraph(dot.Directed)
 
-	return RenpyGraph{nodes: make(map[string]*Node), graphviz: g, graph: graph}
+	return RenpyGraph{nodes: make(map[string]*Node), graph: g}
 }
 
 // PrettyPrint prints the graph in the terminal
@@ -56,18 +50,15 @@ func (g *RenpyGraph) AddNode(tags Tag, label string) {
 
 	_, ok := g.nodes[label]
 	if !ok {
-		nodeGraph, err := g.graph.CreateNode(label)
-		if err != nil {
-			log.Fatal(err)
-		}
-		nodeGraph.SetLabel(labelName)
+		nodeGraph := g.graph.Node(label)
+		nodeGraph.Label(labelName)
 
-		g.nodes[label] = &Node{name: label, neighbors: make([]string, 0), repr: nodeGraph}
+		g.nodes[label] = &Node{name: label, neighbors: make([]string, 0), repr: &nodeGraph}
 	}
 	if tags.title {
-		g.nodes[label].repr.SetShape(cgraph.BoxShape).SetLabel(strings.ToUpper(labelName)).SetColor("purple").SetStyle("bold")
+		g.nodes[label].repr.Label(strings.ToUpper(labelName)).Attrs("color", "purple") //.SetColor("purple").SetStyle("bold")
 	} else if tags.gameOver {
-		g.nodes[label].repr.SetColor("red").SetShape(cgraph.SeptagonShape).SetStyle("bold")
+		g.nodes[label].repr.Attrs("color", "red") //Color("red").SetStyle("bold")
 	}
 
 }
@@ -78,17 +69,31 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 	parentNode := g.nodes[label[0]]
 	childrenNode := g.nodes[label[1]]
 
-	edge, err := g.graph.CreateEdge(parentNode.name+childrenNode.name, parentNode.repr, childrenNode.repr)
-	if err != nil {
-		log.Fatal(err)
-	}
+	edge := g.graph.Edge(*parentNode.repr, *childrenNode.repr)
 
 	if tags.lowLink {
-		edge.SetStyle("dotted")
+		edge.Attrs("style", "dotted")
 	} else if tags.callLink {
-		edge.SetStyle("dashed").SetColor("red")
+		edge.Attrs("style", "dashed", "color", "red")
 	}
 
 	parentNode.neighbors = append(parentNode.neighbors, label[1])
 
+}
+
+// CreateFile creates a file with the graph description in dot language
+// It is meant to be used on a computer
+func (g *RenpyGraph) CreateFile(fileName string) error {
+	defer Track(RunningTime("Writing graphviz file"))
+
+	b := []byte(g.graph.String())
+
+	return ioutil.WriteFile(fileName, b, 0644)
+}
+
+// String returns a string with the graph description in dot language
+// It is meant to be used by other libraries or programs
+func (g *RenpyGraph) String() string {
+
+	return g.graph.String()
 }

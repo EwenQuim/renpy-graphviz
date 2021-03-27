@@ -1,7 +1,6 @@
-package main
+package parser
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 )
@@ -25,8 +24,10 @@ type Context struct {
 	currentFile       string
 }
 
-func parseRenPy(text []string) RenpyGraph {
-	fmt.Println("Parsing .rpy files...")
+// Graph creates a RenpyGraph from lines of script
+func Graph(text []string) RenpyGraph {
+	defer Track(RunningTime("Parsing renpy files"))
+
 	g := NewGraph()
 
 	context := Context{}
@@ -60,7 +61,7 @@ func (context *Context) update(line string) {
 	context.init(line)
 
 	// Handles tags
-	context.HandleTags(line)
+	context.handleTags(line)
 
 	// Handles keywords
 	if !context.tags.ignore {
@@ -68,7 +69,7 @@ func (context *Context) update(line string) {
 			context.lastLabel = ""
 			context.linkedToLastLabel = false
 		}
-		if r, _ := regexp.Compile(`^\s*label ([a-zA-Z0-9_()-]+)\s*:\s*(?:#.*)?$`); r.MatchString(line) {
+		if r, _ := regexp.Compile(`^\s*label ([a-zA-Z0-9_-]+)(?:\([a-zA-Z0-9_= -]*\))?\s*:\s*(?:#.*)?$`); r.MatchString(line) {
 			// LABEL
 			labelName := r.FindStringSubmatch(line)[1]
 
@@ -78,14 +79,14 @@ func (context *Context) update(line string) {
 				context.tags.lowLink = true
 			}
 
-		} else if r, _ := regexp.Compile(`^\s*jump ([a-zA-Z0-9_()-]+)\s*(?:#.*)?$`); r.MatchString(line) {
+		} else if r, _ := regexp.Compile(`^\s*jump ([a-zA-Z0-9_]+)\s*(?:#.*)?$`); r.MatchString(line) {
 			// JUMP
 			labelName := r.FindStringSubmatch(line)[1]
 
 			context.currentLabel = labelName
 			context.currentSituation = situationJump
 			context.linkedToLastLabel = false
-		} else if r, _ := regexp.Compile(`^\s*call ([a-zA-Z0-9_()-]+)\s*(?:#.*)?$`); r.MatchString(line) {
+		} else if r, _ := regexp.Compile(`^\s*call ([a-zA-Z0-9_-]+)(?:\([a-zA-Z0-9_= -]*\))?\s*:\s*(?:#.*)?$`); r.MatchString(line) {
 			// CALL
 			labelName := r.FindStringSubmatch(line)[1]
 

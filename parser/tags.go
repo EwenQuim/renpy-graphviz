@@ -1,4 +1,4 @@
-package main
+package parser
 
 import (
 	"regexp"
@@ -13,7 +13,7 @@ const (
 	attrEnding string = "GAMEOVER"
 )
 
-// Tags allows more control on the graph structure
+// A Tag allows more control on the graph structure
 type Tag struct {
 	ignore    bool
 	title     bool
@@ -23,7 +23,7 @@ type Tag struct {
 	gameOver  bool
 }
 
-func (context *Context) HandleTags(line string) {
+func (context *Context) handleTags(line string) {
 	if strings.Contains(line, "renpy-graphviz") {
 		lineStrings := strings.Split(line, "renpy-graphviz")
 		endOfLine := strings.Join(lineStrings[1:], " ") // removes everything before `renpy-graphviz`
