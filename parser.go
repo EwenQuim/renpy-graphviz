@@ -106,16 +106,24 @@ func (context *Context) update(line string) {
 }
 
 func (context *Context) init(line string) {
-	// Reset all tags
-	context.tags = Tag{}
 
 	// If last line was a label, say it was the last label
 	// Current value have no meaning now
 	// Refer to `.situation`
 	if context.currentSituation == situationLabel {
-		context.lastLabel = context.currentLabel
+
+		if context.tags.gameOver {
+			context.currentLabel = context.lastLabel
+		} else {
+			context.lastLabel = context.currentLabel
+		}
+
 		context.linkedToLastLabel = true
 	}
+
 	context.currentLabel = ""
 	context.currentSituation = situationPending
+
+	// Reset all tags
+	context.tags = Tag{}
 }

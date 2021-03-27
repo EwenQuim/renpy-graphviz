@@ -65,7 +65,7 @@ func (g *RenpyGraph) AddNode(tags Tag, label string) {
 		g.nodes[label] = &Node{name: label, neighbors: make([]string, 0), repr: nodeGraph}
 	}
 	if tags.title {
-		g.nodes[label].repr.SetShape(cgraph.BoxShape).SetLabel(strings.ToUpper(labelName))
+		g.nodes[label].repr.SetShape(cgraph.BoxShape).SetLabel(strings.ToUpper(labelName)).SetColor("purple").SetStyle("bold")
 	} else if tags.gameOver {
 		g.nodes[label].repr.SetColor("red").SetShape(cgraph.SeptagonShape).SetStyle("bold")
 	}
@@ -84,9 +84,9 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 	}
 
 	if tags.lowLink {
-		edge.SetStyle("dotted").SetColor("darkgreen")
+		edge.SetStyle("dotted")
 	} else if tags.callLink {
-		edge.SetStyle("dashed").SetColor("blue").SetLabel("call")
+		edge.SetStyle("dashed").SetColor("red")
 	}
 
 	parentNode.neighbors = append(parentNode.neighbors, label[1])
