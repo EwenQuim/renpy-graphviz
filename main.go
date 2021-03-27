@@ -6,14 +6,16 @@ package main
 import (
 	"fmt"
 	"time"
+
+	"github.com/ewenquim/renpy-graphviz/renpyGraphviz"
 )
 
 func main() {
-	//defer track(runningtime("drawing"))
+	defer track(runningtime("drawing"))
 
 	path := PlugCLI()
 
-	MakeRenPyGraph(path[0])
+	renpyGraphviz.MakeRenPyGraph(path[0])
 
 	fmt.Println("Done.")
 
