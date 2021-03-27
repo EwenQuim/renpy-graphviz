@@ -13,11 +13,7 @@ func main() {
 
 	path := PlugCLI()
 
-	text := fileHandler(path[0])
-
-	g := parseRenPy(text)
-
-	g.makeGraph()
+	MakeRenPyGraph(path[0])
 
 	fmt.Println("Done.")
 
