@@ -1,4 +1,4 @@
-package renpyGraphviz
+package parser
 
 import (
 	"fmt"
@@ -25,7 +25,8 @@ type Context struct {
 	currentFile       string
 }
 
-func parseRenPy(text []string) RenpyGraph {
+// Graph creates a RenpyGraph from lines of script
+func Graph(text []string) RenpyGraph {
 	fmt.Println("Parsing .rpy files...")
 	g := NewGraph()
 

@@ -1,4 +1,4 @@
-package renpyGraphviz
+package parser
 
 import (
 	"regexp"

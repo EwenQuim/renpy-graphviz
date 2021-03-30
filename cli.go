@@ -9,7 +9,7 @@ import (
 )
 
 // PlugCLI handles the Command Line Interface
-func PlugCLI() []string {
+func PlugCLI() string {
 
 	flag.Usage = func() {
 		color.Set(color.Bold)
@@ -26,8 +26,8 @@ func PlugCLI() []string {
 	flag.Parse()
 
 	if len(flag.Args()) == 0 {
-		return []string{"."}
+		return "."
 	}
-	return flag.Args()
+	return flag.Args()[0]
 
 }

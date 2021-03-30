@@ -1,15 +1,15 @@
-package renpyGraphviz
+package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 )
 
-// FileHandler opens all renpy files and transform them into a string
-func fileHandler(rootPath string) []string {
+// getRenpyContent opens all renpy files and transform them into a string list
+// 1 line of script = 1 list element
+func getRenpyContent(rootPath string) []string {
 
 	files, err := walkMatch(rootPath, "*.rpy")
 	if err != nil {
@@ -59,24 +59,4 @@ func walkMatch(root, pattern string) ([]string, error) {
 		return nil, err
 	}
 	return matches, nil
-}
-
-func writeFile(filename, content string) {
-	f, err := os.Create(filename)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	l, err := f.WriteString(content)
-	if err != nil {
-		fmt.Println(err)
-		f.Close()
-		return
-	}
-	fmt.Println(l, "bytes written successfully")
-	err = f.Close()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
 }

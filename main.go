@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ewenquim/renpy-graphviz/renpyGraphviz"
+	"github.com/ewenquim/renpy-graphviz/parser"
 )
 
 func main() {
@@ -15,7 +15,13 @@ func main() {
 
 	path := PlugCLI()
 
-	renpyGraphviz.MakeRenPyGraph(path[0])
+	content := getRenpyContent(path)
+
+	graph := parser.Graph(content)
+
+	graph.CreateFile("renpy-graphviz.dot")
+
+	ReadDotFileToDrawGraph("renpy-graphviz.dot", "renpy-graphviz.png")
 
 	fmt.Println("Done.")
 
