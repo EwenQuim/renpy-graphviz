@@ -69,7 +69,7 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 	parentNode := g.nodes[label[0]]
 	childrenNode := g.nodes[label[1]]
 
-	g.graph.Edge(*parentNode.repr, *childrenNode.repr, parentNode.name+childrenNode.name)
+	g.graph.Edge(*parentNode.repr, *childrenNode.repr)
 
 	// if tags.lowLink {
 	// 	edge.SetStyle("dotted")
@@ -84,6 +84,7 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 // GetDotGraphFile creates a file with the graph description in dot language
 // It is meant to be used on a computer
 func (g *RenpyGraph) CreateFile(fileName string) error {
+	defer Track(RunningTime("Writing graphviz file"))
 
 	b := []byte(g.graph.String())
 
