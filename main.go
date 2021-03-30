@@ -5,13 +5,11 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/ewenquim/renpy-graphviz/parser"
 )
 
 func main() {
-	defer track(runningtime("drawing"))
 
 	path := PlugCLI()
 
@@ -25,15 +23,4 @@ func main() {
 
 	fmt.Println("Done.")
 
-}
-
-// Runningtime computes running time
-func runningtime(s string) (string, time.Time) {
-	return s, time.Now()
-}
-
-// Track is this
-func track(s string, startTime time.Time) {
-	endTime := time.Now()
-	fmt.Println(s, "took", endTime.Sub(startTime))
 }

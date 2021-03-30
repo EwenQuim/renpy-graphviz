@@ -4,10 +4,13 @@ import (
 	"io/ioutil"
 	"log"
 
+	"github.com/ewenquim/renpy-graphviz/parser"
 	"github.com/goccy/go-graphviz"
 )
 
 func ReadDotFileToDrawGraph(pathToDotfile, imageName string) {
+	defer parser.Track(parser.RunningTime("Drawing .png file"))
+
 	g := graphviz.New()
 	b, err := ioutil.ReadFile(pathToDotfile)
 	if err != nil {
