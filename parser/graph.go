@@ -56,9 +56,9 @@ func (g *RenpyGraph) AddNode(tags Tag, label string) {
 		g.nodes[label] = &Node{name: label, neighbors: make([]string, 0), repr: &nodeGraph}
 	}
 	if tags.title {
-		g.nodes[label].repr.Label(strings.ToUpper(labelName)) //.SetColor("purple").SetStyle("bold")
-		// } else if tags.gameOver {
-		// 	g.nodes[label].repr.//Color("red").SetStyle("bold")
+		g.nodes[label].repr.Label(strings.ToUpper(labelName)).Attrs("color", "purple") //.SetColor("purple").SetStyle("bold")
+	} else if tags.gameOver {
+		g.nodes[label].repr.Attrs("color", "red") //Color("red").SetStyle("bold")
 	}
 
 }
@@ -69,19 +69,19 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 	parentNode := g.nodes[label[0]]
 	childrenNode := g.nodes[label[1]]
 
-	g.graph.Edge(*parentNode.repr, *childrenNode.repr)
+	edge := g.graph.Edge(*parentNode.repr, *childrenNode.repr)
 
-	// if tags.lowLink {
-	// 	edge.SetStyle("dotted")
-	// } else if tags.callLink {
-	// 	edge.SetStyle("dashed").SetColor("red")
-	// }
+	if tags.lowLink {
+		edge.Attrs("style", "dotted")
+	} else if tags.callLink {
+		edge.Attrs("style", "dashed", "color", "red")
+	}
 
 	parentNode.neighbors = append(parentNode.neighbors, label[1])
 
 }
 
-// GetDotGraphFile creates a file with the graph description in dot language
+// CreateFile creates a file with the graph description in dot language
 // It is meant to be used on a computer
 func (g *RenpyGraph) CreateFile(fileName string) error {
 	defer Track(RunningTime("Writing graphviz file"))

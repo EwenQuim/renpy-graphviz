@@ -8,7 +8,7 @@ import (
 	"github.com/goccy/go-graphviz"
 )
 
-func ReadDotFileToDrawGraph(pathToDotfile, imageName string) {
+func readDotFileToDrawGraph(pathToDotfile, imageName string) {
 	defer parser.Track(parser.RunningTime("Drawing .png file"))
 
 	g := graphviz.New()

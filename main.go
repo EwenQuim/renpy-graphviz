@@ -19,7 +19,7 @@ func main() {
 
 	graph.CreateFile("renpy-graphviz.dot")
 
-	ReadDotFileToDrawGraph("renpy-graphviz.dot", "renpy-graphviz.png")
+	readDotFileToDrawGraph("renpy-graphviz.dot", "renpy-graphviz.png")
 
 	fmt.Println("Done.")
 

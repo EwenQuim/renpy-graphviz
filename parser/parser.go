@@ -61,7 +61,7 @@ func (context *Context) update(line string) {
 	context.init(line)
 
 	// Handles tags
-	context.HandleTags(line)
+	context.handleTags(line)
 
 	// Handles keywords
 	if !context.tags.ignore {

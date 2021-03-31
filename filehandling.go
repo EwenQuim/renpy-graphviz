@@ -5,11 +5,14 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/ewenquim/renpy-graphviz/parser"
 )
 
 // getRenpyContent opens all renpy files and transform them into a string list
 // 1 line of script = 1 list element
 func getRenpyContent(rootPath string) []string {
+	defer parser.Track(parser.RunningTime("Extracting text from files"))
 
 	files, err := walkMatch(rootPath, "*.rpy")
 	if err != nil {
