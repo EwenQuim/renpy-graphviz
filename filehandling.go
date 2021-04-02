@@ -22,21 +22,22 @@ func getRenpyContent(rootPath string) []string {
 	var fileTextLines []string
 
 	for _, file := range files {
-		readFile, err := os.Open(file)
+		if parser.ConsiderAsUseful(file) {
+			readFile, err := os.Open(file)
+			if err != nil {
+				log.Fatalf("failed to open file: %s", err)
+			}
 
-		if err != nil {
-			log.Fatalf("failed to open file: %s", err)
+			fileScanner := bufio.NewScanner(readFile)
+			fileScanner.Split(bufio.ScanLines)
+
+			for fileScanner.Scan() {
+				fileTextLines = append(fileTextLines, fileScanner.Text())
+			}
+			fileTextLines = append(fileTextLines, "# renpy-graphviz: BREAK")
+
+			readFile.Close()
 		}
-
-		fileScanner := bufio.NewScanner(readFile)
-		fileScanner.Split(bufio.ScanLines)
-
-		for fileScanner.Scan() {
-			fileTextLines = append(fileTextLines, fileScanner.Text())
-		}
-		fileTextLines = append(fileTextLines, "# renpy-graphviz: BREAK")
-
-		readFile.Close()
 	}
 
 	return fileTextLines
