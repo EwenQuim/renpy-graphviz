@@ -4,26 +4,6 @@ import (
 	"strings"
 )
 
-type situation string
-
-const (
-	situationJump    situation = "jump"
-	situationCall    situation = "call"
-	situationLabel   situation = "label"
-	situationPending situation = ""
-)
-
-// Context gives information about the state of the current line of the script
-type Context struct {
-	currentSituation  situation // current line situation : jump or label ?
-	currentLabel      string    // current line label. Empty if keyword is `situationPending`
-	linkedToLastLabel bool      // follows a label or not ?
-	lastLabel         string    // last label encountered. Empty if not linkedToLastLabel
-	tags              Tag
-	currentFile       string
-	detect            customRegexes //regex used to find information
-}
-
 // Graph creates a RenpyGraph from lines of script
 func Graph(text []string) RenpyGraph {
 	defer Track(RunningTime("Parsing renpy files"))
@@ -51,7 +31,7 @@ func Graph(text []string) RenpyGraph {
 			analytics.jumps++
 			g.AddNode(context.tags, context.currentLabel)
 			g.AddEdge(context.tags, context.lastLabel, context.currentLabel)
-		
+
 		case situationCall:
 			analytics.calls++
 			g.AddNode(context.tags, context.currentLabel)

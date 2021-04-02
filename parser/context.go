@@ -2,6 +2,17 @@ package parser
 
 import "regexp"
 
+// Context gives information about the state of the current line of the script
+type Context struct {
+	currentSituation  situation // current line situation : jump or label ?
+	currentLabel      string    // current line label. Empty if keyword is `situationPending`
+	linkedToLastLabel bool      // follows a label or not ?
+	lastLabel         string    // last label encountered. Empty if not linkedToLastLabel
+	tags              Tag
+	currentFile       string
+	detect            customRegexes //regex used to find information
+}
+
 func NewContext() Context {
 	context := Context{}
 	context.detect = initializeDetectors()
