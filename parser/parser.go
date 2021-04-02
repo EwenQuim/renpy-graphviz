@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"regexp"
 	"strings"
 )
 
@@ -22,6 +21,7 @@ type Context struct {
 	lastLabel         string    // last label encountered. Empty if not linkedToLastLabel
 	tags              Tag
 	currentFile       string
+	detect            customRegexes //regex used to find information
 }
 
 // Graph creates a RenpyGraph from lines of script
@@ -30,7 +30,9 @@ func Graph(text []string) RenpyGraph {
 
 	g := NewGraph()
 
-	context := Context{}
+	context := NewContext()
+
+	analytics := Analytics{}
 
 	for _, line := range text {
 
@@ -39,18 +41,27 @@ func Graph(text []string) RenpyGraph {
 		switch context.currentSituation {
 
 		case situationLabel:
+			analytics.labels++
 			g.AddNode(context.tags, context.currentLabel)
 			if context.linkedToLastLabel {
 				g.AddEdge(context.tags, context.lastLabel, context.currentLabel)
 			}
 
-		case situationJump, situationCall:
+		case situationJump:
+			analytics.jumps++
+			g.AddNode(context.tags, context.currentLabel)
+			g.AddEdge(context.tags, context.lastLabel, context.currentLabel)
+		
+		case situationCall:
+			analytics.calls++
 			g.AddNode(context.tags, context.currentLabel)
 			g.AddEdge(context.tags, context.lastLabel, context.currentLabel)
 		}
 
 	}
 
+	// Plug analytics into the model
+	g.info = analytics
 	return g
 }
 
@@ -69,9 +80,9 @@ func (context *Context) update(line string) {
 			context.lastLabel = ""
 			context.linkedToLastLabel = false
 		}
-		if r, _ := regexp.Compile(`^\s*label ([a-zA-Z0-9_-]+)(?:\([a-zA-Z0-9_= -]*\))?\s*:\s*(?:#.*)?$`); r.MatchString(line) {
+		if context.detect.label.MatchString(line) {
 			// LABEL
-			labelName := r.FindStringSubmatch(line)[1]
+			labelName := context.detect.label.FindStringSubmatch(line)[1]
 
 			context.currentLabel = labelName
 			context.currentSituation = situationLabel
@@ -79,22 +90,22 @@ func (context *Context) update(line string) {
 				context.tags.lowLink = true
 			}
 
-		} else if r, _ := regexp.Compile(`^\s*jump ([a-zA-Z0-9_]+)\s*(?:#.*)?$`); r.MatchString(line) {
+		} else if context.detect.jump.MatchString(line) {
 			// JUMP
-			labelName := r.FindStringSubmatch(line)[1]
+			labelName := context.detect.jump.FindStringSubmatch(line)[1]
 
 			context.currentLabel = labelName
 			context.currentSituation = situationJump
 			context.linkedToLastLabel = false
-		} else if r, _ := regexp.Compile(`^\s*call ([a-zA-Z0-9_-]+)(?:\([a-zA-Z0-9_= -]*\))?\s*:\s*(?:#.*)?$`); r.MatchString(line) {
+		} else if context.detect.call.MatchString(line) {
 			// CALL
-			labelName := r.FindStringSubmatch(line)[1]
+			labelName := context.detect.call.FindStringSubmatch(line)[1]
 
 			context.currentLabel = labelName
 			context.currentSituation = situationLabel
 			context.linkedToLastLabel = true
 			context.tags.callLink = true
-		} else if r, _ := regexp.Compile(`^\s*(#.*)?$`); r.MatchString(line) {
+		} else if context.detect.comment.MatchString(line) {
 			// COMMENTS
 
 		} else if context.lastLabel != "" {
