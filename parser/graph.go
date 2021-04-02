@@ -23,7 +23,7 @@ type RenpyGraph struct {
 	info  Analytics
 }
 
-// NewGraph creates a new graph
+// NewGraph creates an empty graph
 func NewGraph() RenpyGraph {
 	g := dot.NewGraph(dot.Directed)
 
@@ -85,16 +85,12 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 // CreateFile creates a file with the graph description in dot language
 // It is meant to be used on a computer
 func (g *RenpyGraph) CreateFile(fileName string) error {
-	defer Track(RunningTime("Writing graphviz file"))
-
 	b := []byte(g.graph.String())
-
 	return ioutil.WriteFile(fileName, b, 0644)
 }
 
 // String returns a string with the graph description in dot language
 // It is meant to be used by other libraries or programs
 func (g *RenpyGraph) String() string {
-
 	return g.graph.String()
 }
