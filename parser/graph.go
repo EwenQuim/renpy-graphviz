@@ -20,6 +20,7 @@ type Node struct {
 type RenpyGraph struct {
 	nodes map[string]*Node
 	graph *dot.Graph
+	info  Analytics
 }
 
 // NewGraph creates a new graph
