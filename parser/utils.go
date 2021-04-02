@@ -1,22 +1,6 @@
 package parser
 
-import (
-	"fmt"
-	"strings"
-	"time"
-)
-
-// Runningtime computes running time
-func RunningTime(s string) (string, time.Time) {
-	fmt.Println(s)
-	return s, time.Now()
-}
-
-// Track is this
-func Track(s string, startTime time.Time) {
-	endTime := time.Now()
-	fmt.Println("  - ", endTime.Sub(startTime))
-}
+import "strings"
 
 // We ConsiderAsUseful a file when it is not a translation file,
 // or isn't options/gui/screens .rpy

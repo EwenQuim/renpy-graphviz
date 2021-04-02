@@ -1,11 +1,18 @@
 package parser
 
-import "regexp"
+import (
+	"fmt"
+	"regexp"
+)
 
-func NewContext() Context {
-	context := Context{}
-	context.detect = initializeDetectors()
-	return context
+// Context gives information about the state of the current line of the script
+type Context struct {
+	currentSituation  situation // current line situation : jump or label ?
+	currentLabel      string    // current line label. Empty if keyword is `situationPending`
+	linkedToLastLabel bool      // follows a label or not ?
+	lastLabel         string    // last label encountered. Empty if not linkedToLastLabel
+	tags              Tag
+	// currentFile       string
 }
 
 type customRegexes struct {
@@ -26,4 +33,22 @@ func initializeDetectors() customRegexes {
 		call:    callDetector,
 		comment: commentDetector,
 	}
+}
+
+func (c *Context) String() string {
+	str := ""
+	if c.currentSituation != "" {
+		str += fmt.Sprint(" situation:", c.currentSituation)
+	}
+	if c.currentLabel != "" {
+		str += fmt.Sprint(" label:", c.currentLabel)
+	}
+	if c.lastLabel != "" {
+		str += fmt.Sprint(" last label:", c.lastLabel)
+	}
+	if c.linkedToLastLabel {
+		str += " linked to last label"
+	}
+
+	return str
 }
