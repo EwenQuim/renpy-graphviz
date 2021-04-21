@@ -12,7 +12,7 @@ type Context struct {
 	linkedToLastLabel bool      // follows a label or not ?
 	lastLabel         string    // last label encountered. Empty if not linkedToLastLabel
 	tags              Tag
-	currentFile       string
+	// currentFile       string
 }
 
 type customRegexes struct {
