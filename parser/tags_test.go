@@ -1,6 +1,9 @@
 package parser
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestHandleTags(t *testing.T) {
 	t.Parallel()
@@ -25,12 +28,14 @@ func TestHandleTags(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		context := Context{}
-		context.handleTags(tc.line)
-		if context.tags != tc.updatedTag {
-			t.Errorf("Error in tags test %v:\n got %+v\nwant %+v", tc.id, context.tags, tc.updatedTag)
+		t.Run(fmt.Sprintf("Running test %v", tc.id), func(t *testing.T) {
+			context := Context{}
+			context.handleTags(tc.line)
+			if context.tags != tc.updatedTag {
+				t.Errorf("Error in tags test %v:\n got %+v\nwant %+v", tc.id, context.tags, tc.updatedTag)
 
-		}
+			}
+		})
 
 	}
 }

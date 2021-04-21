@@ -23,7 +23,7 @@ type RenpyGraph struct {
 	info  Analytics
 }
 
-// NewGraph creates a new graph
+// NewGraph creates an empty graph
 func NewGraph() RenpyGraph {
 	g := dot.NewGraph(dot.Directed)
 

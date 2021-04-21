@@ -32,3 +32,12 @@ func TestUpdate(t *testing.T) {
 
 	}
 }
+
+func BenchmarkUpdate(b *testing.B) {
+	detectors := initializeDetectors()
+
+	for i := 0; i < b.N; i++ {
+		context := Context{}
+		context.update("label truc: #bla", detectors)
+	}
+}

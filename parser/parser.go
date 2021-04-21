@@ -4,7 +4,8 @@ import (
 	"strings"
 )
 
-// Graph creates a RenpyGraph from lines of script
+// Graph creates a RenpyGraph from lines of script.
+// That's the main function
 func Graph(text []string) RenpyGraph {
 	defer Track(RunningTime("Parsing renpy files"))
 
