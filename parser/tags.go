@@ -24,6 +24,7 @@ type Tag struct {
 }
 
 func (context *Context) handleTags(line string) {
+	line = strings.ToLower(line)
 	if strings.Contains(line, "renpy-graphviz") {
 		lineStrings := strings.Split(line, "renpy-graphviz")
 		endOfLine := strings.Join(lineStrings[1:], " ") // removes everything before `renpy-graphviz`
