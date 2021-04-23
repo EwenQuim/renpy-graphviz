@@ -1,17 +1,15 @@
-package main
+package parser
 
 import (
 	"bufio"
 	"log"
 	"os"
 	"path/filepath"
-
-	"github.com/ewenquim/renpy-graphviz/parser"
 )
 
 // getRenpyContent opens all renpy files and transform them into a string list
 // 1 line of script = 1 list element
-func getRenpyContent(rootPath string) []string {
+func GetRenpyContent(rootPath string) []string {
 
 	files, err := walkMatch(rootPath, "*.rpy")
 	if err != nil {
@@ -21,7 +19,7 @@ func getRenpyContent(rootPath string) []string {
 	var fileTextLines []string
 
 	for _, file := range files {
-		if parser.ConsiderAsUseful(file) {
+		if ConsiderAsUseful(file) {
 			readFile, err := os.Open(file)
 			if err != nil {
 				log.Fatalf("failed to open file: %s", err)
