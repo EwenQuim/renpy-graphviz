@@ -13,7 +13,7 @@ func main() {
 
 	path := PlugCLI()
 
-	content := getRenpyContent(path)
+	content := parser.GetRenpyContent(path)
 
 	graph := parser.Graph(content)
 
