@@ -2,7 +2,7 @@ package parser
 
 import "testing"
 
-func TestGraph(t *testing.T) {
+func TestEmptyGraph(t *testing.T) {
 	t.Parallel()
 
 	graph := Graph([]string{"nothing"})
