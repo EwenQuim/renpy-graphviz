@@ -1,4 +1,4 @@
-# Le jeu commence ici
+# Statrs here
 label staAA_aa6rt     : # renpy-graphviz: TiTlE
     scene bg bespin
     show darkv sabre
@@ -7,7 +7,7 @@ label staAA_aa6rt     : # renpy-graphviz: TiTlE
 
 menu:
     "Ah! D'accord, si vous le dites...":
-         jump routeone1
+         jump routeone
 
     "Vous êtes sûr?":
          jump route2
