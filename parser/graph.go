@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"io/ioutil"
 	"regexp"
 	"strings"
@@ -26,20 +25,7 @@ type RenpyGraph struct {
 // NewGraph creates an empty graph
 func NewGraph() RenpyGraph {
 	g := dot.NewGraph(dot.Directed)
-
 	return RenpyGraph{nodes: make(map[string]*Node), graph: g}
-}
-
-// PrettyPrint prints the graph in the terminal
-func (g RenpyGraph) PrettyPrint() {
-	fmt.Println("\n====== Ren'Py Graph debug")
-	fmt.Printf("%+v\n", g)
-
-	for node := range g.nodes {
-		fmt.Println(node, *g.nodes[node])
-	}
-	fmt.Println("=============")
-
 }
 
 // AddNode to the ren'py graph, ignore if label already exists
