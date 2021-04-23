@@ -6,7 +6,7 @@ import (
 )
 
 func TestGetRenpyContent(t *testing.T) {
-	result := GetRenpyContent("../testCases")
+	result := GetRenpyContent("../testCases/simple")
 
 	expected := strings.Split(`label start:
     "Is my VN simple ?"
@@ -24,7 +24,6 @@ label simple_ending: # label complex virtually "jumps" into simple_ending
 	for i, line := range expected {
 		if line != result[i] {
 			t.Fatalf("expected  line:%v\nreceived line:%v", line, result[i])
-
 		}
 	}
 }
