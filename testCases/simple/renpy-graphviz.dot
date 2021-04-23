@@ -1,0 +1,10 @@
+digraph  {
+	
+	n3[label="complexe"];
+	n2[label="simple ending"];
+	n1[label="start"];
+	n3->n2[style="dotted"];
+	n1->n2;
+	n1->n3;
+	
+}
