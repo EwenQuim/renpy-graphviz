@@ -44,9 +44,57 @@ Here are the tags available
 
 Case, spaces and separators are handled just fine, don't worry about it.
 
-### Disclaimer
+#### TITLE
+
+Set the current label style in the graph to a title
+
+#### BREAK
+
+#### IGNORE
+
+Ignore the current line. If this is a jump to a label that isn't ignored, the label will still appear on the graph but not the arrow that should go towards it.
+
+#### GAMEOVER
+
+Set the current label style in the graph to a title
+
+#### SKIPLINK
+
+## Limitations
 
 This require your VN to be structured in a certain way, so it's possible that it isn't perfect for you. Feel free to raise an issue [here](https://github.com/EwenQuim/renpy-graphviz/issues), or to change your VN structure.
+
+The program works only for scripts that do not stack call statement, i.e. the program expects a `break` statement before any other `label`/`call` if you used call to get there.
+
+Works:
+
+```renpy
+label start:
+  eileen "hello"
+  call second
+  eileen "I'm back"
+
+# renpy-graphviz: BREAK <- recommended here but not mandatory, see Tags section
+label second:
+  eileen "inside a CALL statement"
+  break <- works !!!
+```
+
+Does NOT work:
+
+```renpy
+label start:
+  eileen "hello"
+  call second
+  eileen "I'm back"
+
+# renpy-graphviz: BREAK <- recommended here but not mandatory, see Tags section
+label second:
+  eileen "inside a CALL statement"
+  call / jump third_label <- Isn't taken into account !!!!
+
+label third_label
+```
 
 ## LICENSE
 

@@ -2,6 +2,7 @@ package parser
 
 import (
 	"io/ioutil"
+	"math/rand"
 	"regexp"
 	"strings"
 
@@ -28,15 +29,36 @@ func NewGraph() RenpyGraph {
 	return RenpyGraph{nodes: make(map[string]*Node), graph: g}
 }
 
+var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func randSeq(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
+}
+
+func beautifyLabel(label string, tags Tag) string {
+	labelName := label
+	re := regexp.MustCompile("[)(_=]")
+	labelName = re.ReplaceAllString(label, " ")
+
+	if tags.skipLink {
+		return labelName[:len(labelName)-5] + " *"
+	} else {
+		return labelName
+	}
+}
+
 // AddNode to the ren'py graph, ignore if label already exists
 func (g *RenpyGraph) AddNode(tags Tag, label string) {
 	// fmt.Println("adding ", label, "to", g)
-	re := regexp.MustCompile("[)_]")
-	labelName := re.ReplaceAllString(label, " ")
-	labelName = strings.Replace(labelName, "(", ": ", 1)
 
-	_, ok := g.nodes[label]
-	if !ok {
+	labelName := beautifyLabel(label, tags)
+
+	_, exists := g.nodes[label]
+	if !exists {
 		nodeGraph := g.graph.Node(label)
 		nodeGraph.Label(labelName)
 

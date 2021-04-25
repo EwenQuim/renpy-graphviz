@@ -29,6 +29,8 @@ func TestHandleTags(t *testing.T) {
 		{6, "  # renpY-grapHvIz: BREAK", Tag{breakFlow: true}},
 		// GAME OVER FLOW
 		{7, " label truc: # renpY-grapHvIz: GAMEOVER", Tag{gameOver: true}},
+		// SKIPLINK
+		{8, " label truc: # renpY-grapHvIz: SKIPLINK", Tag{skipLink: true}},
 	}
 
 	for _, tc := range testCases {

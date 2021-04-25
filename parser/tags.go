@@ -7,10 +7,11 @@ import (
 
 // # renpy-graphviz: GAMEOVER
 const (
-	attrIgnore string = "IGNORE"
-	attrTitle  string = "TITLE"
-	attrBreak  string = "BREAK"
-	attrEnding string = "GAMEOVER"
+	attrIgnore   string = "IGNORE"
+	attrTitle    string = "TITLE"
+	attrBreak    string = "BREAK"
+	attrEnding   string = "GAMEOVER"
+	attrSkipLink string = "SKIPLINK"
 )
 
 // A Tag allows more control on the graph structure
@@ -21,6 +22,7 @@ type Tag struct {
 	lowLink   bool
 	callLink  bool
 	gameOver  bool
+	skipLink  bool
 }
 
 func (context *Context) handleTags(line string) {
@@ -41,6 +43,8 @@ func (context *Context) handleTags(line string) {
 				context.tags.breakFlow = true
 			case attrEnding:
 				context.tags.gameOver = true
+			case attrSkipLink:
+				context.tags.skipLink = true
 			}
 		}
 	}

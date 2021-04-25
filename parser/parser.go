@@ -76,6 +76,9 @@ func (context *Context) update(line string, detect customRegexes) {
 		} else if detect.jump.MatchString(line) {
 			// JUMP
 			labelName := detect.jump.FindStringSubmatch(line)[1]
+			if context.tags.skipLink {
+				labelName = labelName + randSeq(5)
+			}
 
 			context.currentLabel = labelName
 			context.currentSituation = situationJump
@@ -83,6 +86,9 @@ func (context *Context) update(line string, detect customRegexes) {
 		} else if detect.call.MatchString(line) {
 			// CALL
 			labelName := detect.call.FindStringSubmatch(line)[1]
+			if context.tags.skipLink {
+				labelName = labelName + randSeq(5)
+			}
 
 			context.currentLabel = labelName
 			context.currentSituation = situationLabel

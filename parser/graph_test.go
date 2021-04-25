@@ -5,10 +5,6 @@ import (
 	"testing"
 )
 
-func TestAddNode(t *testing.T) {
-	t.Parallel()
-}
-
 func TestStringSimple(t *testing.T) {
 	t.Parallel()
 
