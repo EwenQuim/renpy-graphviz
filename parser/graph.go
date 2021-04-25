@@ -1,9 +1,12 @@
 package parser
 
 import (
+	"bytes"
 	"io/ioutil"
+	"math/rand"
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/emicklei/dot"
 )
@@ -22,30 +25,74 @@ type RenpyGraph struct {
 	info  Analytics
 }
 
+var replaceBlanks = regexp.MustCompile("[)(_=]")
+
 // NewGraph creates an empty graph
 func NewGraph() RenpyGraph {
 	g := dot.NewGraph(dot.Directed)
 	return RenpyGraph{nodes: make(map[string]*Node), graph: g}
 }
 
-// AddNode to the ren'py graph, ignore if label already exists
+var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func randSeq(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
+}
+
+func beautifyLabel(label string, tags Tag) string {
+	labelName := label
+
+	labelName = replaceBlanks.ReplaceAllString(label, " ")
+
+	if tags.skipLink {
+		return labelName[:len(labelName)-5] + " *"
+	}
+
+	labelName = insertSpaces(labelName)
+
+	return labelName
+}
+
+func insertSpaces(s string) string {
+	buf := &bytes.Buffer{}
+	var previousChar bool
+	var previousNumber bool
+	for i, rune := range s {
+		nowChar := unicode.IsLetter(rune)
+		nowNumber := unicode.IsDigit(rune)
+		if previousNumber && nowChar && i > 0 {
+			buf.WriteRune(' ')
+		} else if previousChar && nowNumber && i > 0 {
+			buf.WriteRune(' ')
+		}
+		previousChar = nowChar
+		previousNumber = nowNumber
+		buf.WriteRune(rune)
+	}
+	return buf.String()
+}
+
+// AddNode to the ren'py graph. If label already exists, only apply styles
 func (g *RenpyGraph) AddNode(tags Tag, label string) {
 	// fmt.Println("adding ", label, "to", g)
-	re := regexp.MustCompile("[)_]")
-	labelName := re.ReplaceAllString(label, " ")
-	labelName = strings.Replace(labelName, "(", ": ", 1)
 
-	_, ok := g.nodes[label]
-	if !ok {
+	labelName := beautifyLabel(label, tags)
+
+	_, exists := g.nodes[label]
+	if !exists {
 		nodeGraph := g.graph.Node(label)
 		nodeGraph.Label(labelName)
 
 		g.nodes[label] = &Node{name: label, neighbors: make([]string, 0), repr: &nodeGraph}
 	}
 	if tags.title {
-		g.nodes[label].repr.Label(strings.ToUpper(labelName)).Attrs("color", "purple") //.SetColor("purple").SetStyle("bold")
+		g.nodes[label].repr.Label(strings.ToUpper(labelName)).Attrs("color", "purple", "style", "bold", "shape", "rectangle", "fontsize", "16")
 	} else if tags.gameOver {
-		g.nodes[label].repr.Attrs("color", "red") //Color("red").SetStyle("bold")
+		g.nodes[label].repr.Attrs("color", "red", "style", "bold", "shape", "septagon")
 	}
 
 }

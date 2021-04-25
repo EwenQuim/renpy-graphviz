@@ -1,4 +1,5 @@
 *.gv
 *.png
+!data/*.png
 .DS_store
 *.out

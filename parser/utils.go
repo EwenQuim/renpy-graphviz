@@ -2,11 +2,13 @@ package parser
 
 import "strings"
 
-// We ConsiderAsUseful a file when it is not a translation file,
+// ConsiderAsUseful checks if a file is not a translation file,
 // or isn't options/gui/screens .rpy
 func ConsiderAsUseful(fullPath string) bool {
 	switch {
 	case strings.Contains(fullPath, "tl/"):
+		return false
+	case strings.Contains(fullPath, "00"):
 		return false
 	case strings.Contains(fullPath, "options.rpy"):
 		return false
