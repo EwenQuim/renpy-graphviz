@@ -33,6 +33,8 @@ func TestUpdate(t *testing.T) {
 			Context{currentSituation: "jump", currentLabel: "far"}},
 		{3, "	call scene # towards temporary label",
 			Context{currentSituation: "label", currentLabel: "scene", linkedToLastLabel: true, tags: Tag{callLink: true}}},
+		{4, "	call scene(4) # towards temporary label",
+			Context{currentSituation: "label", currentLabel: "scene", linkedToLastLabel: true, tags: Tag{callLink: true}}},
 	}
 	for _, tc := range testCases {
 		t.Run(fmt.Sprintf("Running test %v", tc.id), func(t *testing.T) {
