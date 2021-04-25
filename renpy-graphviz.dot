@@ -1,17 +1,27 @@
 digraph  {
 	
-	n2[color="red",label="bad ending"];
-	n4[color="purple",label="GOOD ENDING"];
-	n5[label="route2"];
-	n3[label="routeAlternative"];
-	n1[color="purple",label="ROUTEONE"];
-	n6[color="purple",label="STAAA AA6RT"];
-	n5->n2[style="dotted"];
-	n3->n4;
-	n1->n2;
-	n1->n3[style="dotted"];
-	n6->n1;
-	n6->n5;
-	n6->n3;
+	n5[color="red",label="bad ending"];
+	n12[label="complexe"];
+	n7[color="purple",label="GOOD ENDING"];
+	n2[label="last scene"];
+	n8[label="route2"];
+	n6[label="routeAlternative"];
+	n4[color="purple",label="ROUTEONE"];
+	n11[label="simple ending"];
+	n3[label="some scene then comeback"];
+	n9[color="purple",label="STAAA AA6RT"];
+	n10[label="start"];
+	n1[color="purple",label="START CALL"];
+	n12->n11[style="dotted"];
+	n8->n5[style="dotted"];
+	n6->n7;
+	n4->n5;
+	n4->n6[style="dotted"];
+	n9->n4;
+	n9->n8;
+	n9->n6;
+	n10->n11;
+	n10->n12;
+	n1->n2[style="dotted"];
 	
 }
