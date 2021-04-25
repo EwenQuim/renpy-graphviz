@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-// getRenpyContent opens all renpy files and transform them into a string list
+// GetRenpyContent opens all renpy files and transform them into a string list
 // 1 line of script = 1 list element
 func GetRenpyContent(rootPath string) []string {
 

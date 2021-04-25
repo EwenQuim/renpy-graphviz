@@ -1,0 +1,17 @@
+digraph  {
+	
+	n6[label="five"];
+	n5[label="four"];
+	n1[label="one"];
+	n7[label="six"];
+	n2[label="six *"];
+	n4[label="three"];
+	n3[label="two"];
+	n6->n7[style="dotted"];
+	n5->n6[style="dotted"];
+	n1->n2;
+	n1->n3[style="dotted"];
+	n4->n5[style="dotted"];
+	n3->n4[style="dotted"];
+	
+}

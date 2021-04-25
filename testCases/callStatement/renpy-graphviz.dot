@@ -1,0 +1,9 @@
+digraph  {
+	
+	n3[label="last scene"];
+	n2[label="some scene then comeback"];
+	n1[color="purple",label="START CALL"];
+	n2->n3[style="dotted"];
+	n1->n2[color="red",style="dashed"];
+	
+}

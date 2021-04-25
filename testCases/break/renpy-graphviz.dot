@@ -1,0 +1,9 @@
+digraph  {
+	
+	n1[label="one"];
+	n2[label="three"];
+	n3[label="two"];
+	n1->n2[color="red",style="dashed"];
+	n2->n3[style="dotted"];
+	
+}

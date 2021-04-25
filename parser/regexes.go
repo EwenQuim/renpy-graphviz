@@ -10,6 +10,8 @@ type Context struct {
 	currentLabel      string    // current line label. Empty if keyword is `situationPending`
 	linkedToLastLabel bool      // follows a label or not ?
 	lastLabel         string    // last label encountered. Empty if not linkedToLastLabel
+	indent            int       // 4 spaces = 1 indent
+	menuIndent        int       // negative = not inside a menu
 	tags              Tag
 	// currentFile       string
 }
@@ -19,17 +21,20 @@ type customRegexes struct {
 	jump    *regexp.Regexp
 	call    *regexp.Regexp
 	comment *regexp.Regexp
+	menu    *regexp.Regexp
 }
 
 func initializeDetectors() customRegexes {
-	labelDetector, _ := regexp.Compile(`^\s*label ([a-zA-Z0-9_-]+)(?:\([a-zA-Z0-9_= -]*\))?\s*:\s*(?:#.*)?$`)
+	labelDetector, _ := regexp.Compile(`^\s*label ([a-zA-Z0-9_-]+)(?:\([a-zA-Z0-9_= \-"']*\))?\s*:\s*(?:#.*)?$`)
 	jumpDetector, _ := regexp.Compile(`^\s*jump ([a-zA-Z0-9_]+)\s*(?:#.*)?$`)
-	callDetector, _ := regexp.Compile(`^\s*call ([a-zA-Z0-9_-]+)(?:\([a-zA-Z0-9_= -]*\))?\s*:\s*(?:#.*)?$`)
+	callDetector, _ := regexp.Compile(`^\s*call (([a-zA-Z0-9_-]+)(?:\([a-zA-Z0-9_= \-"']*\))?)\s*(?:#.*)?$`)
+	menuDetector, _ := regexp.Compile(`^\s*menu\s*:\s*(?:#.*)?$`)
 	commentDetector, _ := regexp.Compile(`^\s*(#.*)?$`)
 	return customRegexes{
 		label:   labelDetector,
 		jump:    jumpDetector,
 		call:    callDetector,
 		comment: commentDetector,
+		menu:    menuDetector,
 	}
 }
