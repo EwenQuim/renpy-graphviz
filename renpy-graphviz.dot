@@ -1,17 +1,17 @@
 digraph  {
 	
-	n5[color="red",label="bad ending"];
+	n5[color="red",label="bad ending",shape="pentagon",style="bold"];
 	n12[label="complexe"];
-	n7[color="purple",label="GOOD ENDING"];
+	n7[color="purple",label="GOOD ENDING",style="bold"];
 	n3[label="last scene"];
 	n8[label="route2"];
 	n6[label="routeAlternative"];
-	n4[color="purple",label="ROUTEONE"];
+	n4[color="purple",label="ROUTEONE",style="bold"];
 	n11[label="simple ending"];
 	n2[label="some scene then comeback"];
-	n9[color="purple",label="STAAA AA6RT"];
+	n9[color="purple",label="STAAA AA6RT",style="bold"];
 	n10[label="start"];
-	n1[color="purple",label="START CALL"];
+	n1[color="purple",label="START CALL",style="bold"];
 	n12->n11[style="dotted"];
 	n8->n5[style="dotted"];
 	n6->n7;

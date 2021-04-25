@@ -43,9 +43,9 @@ func (g *RenpyGraph) AddNode(tags Tag, label string) {
 		g.nodes[label] = &Node{name: label, neighbors: make([]string, 0), repr: &nodeGraph}
 	}
 	if tags.title {
-		g.nodes[label].repr.Label(strings.ToUpper(labelName)).Attrs("color", "purple") //.SetColor("purple").SetStyle("bold")
+		g.nodes[label].repr.Label(strings.ToUpper(labelName)).Attrs("color", "purple", "style", "bold", "shape", "rectangle")
 	} else if tags.gameOver {
-		g.nodes[label].repr.Attrs("color", "red") //Color("red").SetStyle("bold")
+		g.nodes[label].repr.Attrs("color", "red", "style", "bold", "shape", "septagon")
 	}
 
 }

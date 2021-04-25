@@ -45,12 +45,12 @@ func TestStringComplex(t *testing.T) {
 	expected := r.Replace(`
 digraph  {
 
-	n2[color="red",label="bad ending"];
-	n4[color="purple",label="GOOD ENDING"];
+	n2[color="red",label="bad ending",shape="septagon",style="bold"];
+	n4[color="purple",label="GOOD ENDING",shape="rectangle",style="bold"];
 	n5[label="route2"];
 	n3[label="routeAlternative"];
-	n1[color="purple",label="ROUTEONE"];
-	n6[color="purple",label="STAAA AA6RT"];
+	n1[color="purple",label="ROUTEONE",shape="rectangle",style="bold"];
+	n6[color="purple",label="STAAA AA6RT",shape="rectangle",style="bold"];
 	n5->n2[style="dotted"];
 	n3->n4;
 	n1->n2;
@@ -59,7 +59,7 @@ digraph  {
 	n6->n5;
 	n6->n3;
 	
-}`)
+}	`)
 	t.Log(expected)
 
 	renpyLines := GetRenpyContent("../testCases/complex")
