@@ -50,7 +50,7 @@ go get pkg.amethysts.studio/renpy-graphviz
 
 You can test this tool in the browser. If you really want to get `.png` files, please download. Note that I will not maintain this website, it is not guaranteed to represent the library 100%.
 
-https://lab.quimerch.com
+https://renpy.amethysts.studio
 
 ## Tags
 
