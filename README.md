@@ -3,6 +3,7 @@
 [![Go Reference](https://pkg.go.dev/badge/pkg.amethysts.studio/renpy-graphviz.svg)](https://pkg.go.dev/pkg.amethysts.studio/renpy-graphviz)
 [![Go Report Card](https://goreportcard.com/badge/pkg.amethysts.studio/renpy-graphviz)](https://goreportcard.com/report/pkg.amethysts.studio/renpy-graphviz)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ewenquim/renpy-graphviz/Distribute%20executable)
+[![Link to online demo](https://img.shields.io/badge/try-online-blue)](https://renpy.amethysts.studio)
 
 This is a tool written in Go that allows you to **visualise the routes** of your story.
 
