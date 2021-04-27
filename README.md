@@ -9,6 +9,21 @@ This is a tool written in Go that allows you to **visualise the routes** of your
 ![](./data/the_question.jpg)
 _Routes of the Question, the classic Ren'Py example_
 
+- [Ren'Py graph vizualiser](#renpy-graph-vizualiser)
+  - [Examples](#examples)
+  - [How to use](#how-to-use)
+    - [Go library](#go-library)
+  - [Online demo](#online-demo)
+  - [Tags](#tags)
+    - [TITLE & GAMEOVER](#title--gameover)
+    - [BREAK](#break)
+    - [IGNORE](#ignore)
+    - [SKIPLINK](#skiplink)
+  - [Limitations](#limitations)
+  - [LICENSE](#license)
+
+## Examples
+
 ![](./data/DDLC_extract.png)
 _[Doki Doki Litterature Club](https://ddlc.moe/) will no longer have secrets for you!_
 
@@ -20,20 +35,32 @@ _An extract from my personnal VN, [Coalescence](https://play.google.com/store/ap
 - [**Download**](https://github.com/EwenQuim/renpy-graphviz/releases) latest version
 - **Move** the program in your game folder
 - **Run it** from the command line
-  - you might have to give yourself the permissions: don't worry my program isn't a virus ! Run `chmod +x renpy-graphviz*`
+  - you might have to give yourself the permissions: don't worry my program isn't a virus ! Run `chmod +x renpy-graphviz*` on Unix.
 - `renpy-graphviz.png` just appeared, **enjoy** !
 
-## Advanced usage
+### Go library
 
-### Tags
+If you are a Go user and want to integrate this in a lib/program, it is totally possible. The `/parser` module is very powerful.
+
+```
+go get pkg.amethysts.studio/renpy-graphviz
+```
+
+## Online demo
+
+You can test this tool in the browser. If you really want to get `.png` files, please download. Note that I will not maintain this website, it is not guaranteed to represent the library 100%.
+
+https://lab.quimerch.com
+
+## Tags
 
 I made a tag system to enforce some behaviours. For example
 
-```python
+```renpy
 label chapter_1: #renpy-graphviz: TITLE
 ```
 
-Before tags, you must write `renpy-graphviz` to ensure there are no collision with existing words in your VN.
+Before tags, you must write `renpy-graphviz` in a comment to ensure there are no collision with existing words in your VN.
 
 Here are the tags available
 
@@ -45,13 +72,13 @@ Here are the tags available
 
 Case, spaces and separators are handled very loosely, don't worry about it.
 
-#### TITLE & GAMEOVER
+### TITLE & GAMEOVER
 
 Set some styles
 
 ![Example of GAMEOVER & TITLE tags](./data/example-title-gameover.png)
 
-#### BREAK
+### BREAK
 
 Cancels any "guessed link".
 
@@ -72,11 +99,11 @@ label three:
 | :--------------------------------: | :-------------------------------: |
 | ![](data/example-break-before.png) | ![](data/example-break-after.png) |
 
-#### IGNORE
+### IGNORE
 
 Ignore the current line. If this is a jump to a label that isn't ignored, the label will still appear on the graph but not the arrow that should go towards it.
 
-#### SKIPLINK
+### SKIPLINK
 
 Avoids long arrows by creating another label with the same name. Beware, the label can't have any children and is marked by an asterix to show it is a copy.
 
@@ -115,7 +142,7 @@ label start:
 # renpy-graphviz: BREAK <- recommended here but not mandatory, see Tags section
 label second:
   eileen "inside a CALL statement"
-  break <- works !!!
+  break # <- works !!!
 ```
 
 Does NOT work:
@@ -129,7 +156,7 @@ label start:
 # renpy-graphviz: BREAK <- recommended here but not mandatory, see Tags section
 label second:
   eileen "inside a CALL statement"
-  call / jump third_label <- Isn't taken into account !!!!
+  call / jump third_label # <- Isn't taken into account !!!!
 
 label third_label
 ```
