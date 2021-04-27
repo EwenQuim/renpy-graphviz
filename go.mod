@@ -1,4 +1,4 @@
-module github.com/ewenquim/renpy-graphviz
+module pkg.amethysts.studio/renpy-graphviz
 
 go 1.15
 

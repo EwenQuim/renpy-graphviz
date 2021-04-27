@@ -1,7 +1,7 @@
 # Ren'Py graph vizualiser
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/ewenquim/renpy-graphviz.svg)](https://pkg.go.dev/github.com/ewenquim/renpy-graphviz)
-[![Go Report Card](https://goreportcard.com/badge/github.com/ewenquim/renpy-graphviz)](https://goreportcard.com/report/github.com/ewenquim/renpy-graphviz)
+[![Go Reference](https://pkg.go.dev/badge/pkg.amethysts.studio/renpy-graphviz.svg)](https://pkg.go.dev/pkg.amethysts.studio/renpy-graphviz)
+[![Go Report Card](https://goreportcard.com/badge/pkg.amethysts.studio/renpy-graphviz)](https://goreportcard.com/report/pkg.amethysts.studio/renpy-graphviz)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ewenquim/renpy-graphviz/Distribute%20executable)
 
 This is a tool written in Go that allows you to **visualise the routes** of your story.
@@ -37,28 +37,66 @@ Before tags, you must write `renpy-graphviz` to ensure there are no collision wi
 
 Here are the tags available
 
-- `TITLE`: set the current label style in the graph to a title
+- `TITLE`: style for chapters
 - `BREAK`: breaks the current flow, for parallel labels for example
 - `IGNORE`: ignores the current label. Jumps to this label still exist
-- ... more to come
+- `GAMEOVER`: style for endings
+- `SKIPLINK`: avoid long arrows by creating a "shortcut" - read the doc below before using
 
-Case, spaces and separators are handled just fine, don't worry about it.
+Case, spaces and separators are handled very loosely, don't worry about it.
 
-#### TITLE
+#### TITLE & GAMEOVER
 
-Set the current label style in the graph to a title
+Set some styles
+
+![Example of GAMEOVER & TITLE tags](./data/example-title-gameover.png)
 
 #### BREAK
+
+Cancels any "guessed link".
+
+```renpy
+label one:
+  "blah blah"
+
+label two:
+    "bla bla"
+
+# renpy-graphviz: BREAK
+label three:
+    "the end"
+
+```
+
+|            without tag             |             with tag              |
+| :--------------------------------: | :-------------------------------: |
+| ![](data/example-break-before.png) | ![](data/example-break-after.png) |
 
 #### IGNORE
 
 Ignore the current line. If this is a jump to a label that isn't ignored, the label will still appear on the graph but not the arrow that should go towards it.
 
-#### GAMEOVER
-
-Set the current label style in the graph to a title
-
 #### SKIPLINK
+
+Avoids long arrows by creating another label with the same name. Beware, the label can't have any children and is marked by an asterix to show it is a copy.
+
+```renpy
+label one:
+    if condition:
+        jump six # renpy-graphviz: SKIPLINK
+    else:
+        pass
+
+label two:
+label three:
+label four:
+label five:
+label six:
+```
+
+|              without tag              |               with tag               |
+| :-----------------------------------: | :----------------------------------: |
+| ![](data/example-skiplink-before.png) | ![](data/example-skiplink-after.png) |
 
 ## Limitations
 
