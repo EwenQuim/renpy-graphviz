@@ -55,7 +55,7 @@ https://renpy.amethysts.studio
 
 ## Tags
 
-I made a tag system to enforce some behaviours. For example
+Ren'Py scripting isn't strict, so sometimes there are situations the script cannot know what is going on in your story. So I made a tag system to enforce some behaviours. For example
 
 ```renpy
 label chapter_1: #renpy-graphviz: TITLE
@@ -65,11 +65,11 @@ Before tags, you must write `renpy-graphviz` in a comment to ensure there are no
 
 Here are the tags available
 
-- `TITLE`: style for chapters
-- `BREAK`: breaks the current flow, for parallel labels for example
-- `IGNORE`: ignores the current label. Jumps to this label still exist
-- `GAMEOVER`: style for endings
-- `SKIPLINK`: avoid long arrows by creating a "shortcut" - read the doc below before using
+- [TITLE](#TITLE-&-Gameover): style for chapters
+- [BREAK](#BREAK): breaks the current flow, for parallel labels for example
+- [IGNORE](#IGNORE): ignores the current label. Jumps to this label still exist
+- [GAMEOVER](#TITLE-&-Gameover): style for endings
+- [SKIPLINK](#SKIPLINK): avoid long arrows by creating a "shortcut" - read the doc below before using
 
 Case, spaces and separators are handled very loosely, don't worry about it.
 
@@ -77,36 +77,143 @@ Case, spaces and separators are handled very loosely, don't worry about it.
 
 Set some styles
 
-![Example of GAMEOVER & TITLE tags](./data/example-title-gameover.png)
+<table>
+<thead>
+  <tr>
+    <th>TITLE / GAMEOVER</th>
+    <th>script.rpy</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
 
-### BREAK
-
-Cancels any "guessed link".
+  <td>
+  
+![](data/example-title-gameover.png)
+  </td>
+    <td>
 
 ```renpy
 label one:
   "blah blah"
 
 label two:
-    "bla bla"
+"bla bla"
 
 # renpy-graphviz: BREAK
-label three:
-    "the end"
 
+label three:
+"the end"
 ```
 
-|            without tag             |             with tag              |
-| :--------------------------------: | :-------------------------------: |
-| ![](data/example-break-before.png) | ![](data/example-break-after.png) |
+  </td>
+  </tr>
+</tbody>
+</table>
+
+### BREAK
+
+Cancels any "guessed link".
+
+<table>
+<thead>
+  <tr>
+    <th>Expected</th>
+    <th>with BREAK</th>
+    <th>script.rpy</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>
+
+![](data/example-break-before.png)
+
+  </td>
+    <td>
+  
+![](data/example-break-after.png)
+  </td>
+    <td>
+
+```renpy
+label one:
+  "blah blah"
+
+label two:
+"bla bla"
+
+# renpy-graphviz: BREAK
+
+label three:
+"the end"
+```
+
+  </td>
+  </tr>
+</tbody>
+</table>
 
 ### IGNORE
 
 Ignore the current line. If this is a jump to a label that isn't ignored, the label will still appear on the graph but not the arrow that should go towards it.
 
+<table>
+<thead>
+  <tr>
+    <th>Expected</th>
+    <th>IGNORE</th>
+    <th>script.rpy</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>
+
+![](data/example-ignore-before.png)
+
+  </td>
+    <td>
+  
+![](data/example-ignore-after.png)
+  </td>
+    <td>
+
+```renpy
+label one:
+label two: # renpy-graphviz: IGNORE
+label three:
+```
+
+  </td>
+  </tr>
+</tbody>
+</table>
+
 ### SKIPLINK
 
 Avoids long arrows by creating another label with the same name. Beware, the label can't have any children and is marked by an asterix to show it is a copy.
+
+<table>
+<thead>
+  <tr>
+    <th>Expected</th>
+    <th>SKIPLINK</th>
+    <th>script.rpy</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>
+
+![](data/example-skiplink-before.png)
+
+  </td>
+    <td>
+  
+![](data/example-skiplink-after.png)
+  </td>
+    <td>
 
 ```renpy
 label one:
@@ -122,9 +229,10 @@ label five:
 label six:
 ```
 
-|              without tag              |               with tag               |
-| :-----------------------------------: | :----------------------------------: |
-| ![](data/example-skiplink-before.png) | ![](data/example-skiplink-after.png) |
+  </td>
+  </tr>
+</tbody>
+</table>
 
 ## Limitations
 
@@ -157,9 +265,9 @@ label start:
 # renpy-graphviz: BREAK <- recommended here but not mandatory, see Tags section
 label second:
   eileen "inside a CALL statement"
-  call / jump third_label # <- Isn't taken into account !!!!
+  call / jump third_label # <- Unexpected behaviour depending of the structure of your story
 
-label third_label
+label third_label:
 ```
 
 ## LICENSE

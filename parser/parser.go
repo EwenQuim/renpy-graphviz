@@ -1,9 +1,5 @@
 package parser
 
-import (
-	"strings"
-)
-
 // Graph creates a RenpyGraph from lines of script.
 // That's the main function
 func Graph(text []string) RenpyGraph {
@@ -37,6 +33,10 @@ func Graph(text []string) RenpyGraph {
 		case situationCall:
 			analytics.calls++
 			g.AddNode(context.tags, context.currentLabel)
+			if _, exists := g.nodes[context.lastLabel]; !exists {
+				println("Error in your game: no label detected before the following line\n", line)
+				g.AddNode(Tag{}, context.lastLabel) //Useless but security in case the game isn't well structured
+			}
 			g.AddEdge(context.tags, context.lastLabel, context.currentLabel)
 		}
 
@@ -49,12 +49,9 @@ func Graph(text []string) RenpyGraph {
 
 // updates the context according to a line of text and detectors
 func (context *Context) update(line string, detect customRegexes) {
-	line = strings.TrimSpace(line)
 
-	// Initialises context
-	context.init(line)
+	context.init()
 
-	// Handles tags
 	context.handleTags(line)
 
 	// Handles keywords
@@ -63,7 +60,9 @@ func (context *Context) update(line string, detect customRegexes) {
 			context.lastLabel = ""
 			context.linkedToLastLabel = false
 		}
-		if detect.label.MatchString(line) {
+		if detect.comment.MatchString(line) {
+			// COMMENTS
+		} else if detect.label.MatchString(line) {
 			// LABEL
 			labelName := detect.label.FindStringSubmatch(line)[1]
 
@@ -91,11 +90,9 @@ func (context *Context) update(line string, detect customRegexes) {
 			}
 
 			context.currentLabel = labelName
-			context.currentSituation = situationLabel
+			context.currentSituation = situationCall
 			context.linkedToLastLabel = true
 			context.tags.callLink = true
-		} else if detect.comment.MatchString(line) {
-			// COMMENTS
 
 		} else if context.lastLabel != "" {
 			// USUAL VN
@@ -106,20 +103,20 @@ func (context *Context) update(line string, detect customRegexes) {
 
 }
 
-func (context *Context) init(line string) {
+// initialises the context object before reading a new line, with the context of the previous line
+func (context *Context) init() {
 
 	// If last line was a label, say it was the last label
 	// Current value have no meaning now
 	// Refer to `.situation`
-	if context.currentSituation == situationLabel {
-
-		if context.tags.gameOver {
-			context.currentLabel = context.lastLabel
-		} else {
+	if context.currentSituation == situationLabel || context.currentSituation == situationCall {
+		// Do not follow "game over" marked tags
+		// Keep the previous label if "game over" tag
+		// Else, update the corresponding label
+		if !context.tags.gameOver {
 			context.lastLabel = context.currentLabel
+			context.linkedToLastLabel = true
 		}
-
-		context.linkedToLastLabel = true
 	}
 
 	context.currentLabel = ""
