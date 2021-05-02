@@ -2,7 +2,6 @@ package parser
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"regexp"
@@ -17,20 +16,27 @@ type Node struct {
 	name      string
 	neighbors []string
 	repr      *dot.Node
+	notAlone  bool
 }
 
 // RenpyGraph is the graph of Ren'Py story structure
 type RenpyGraph struct {
-	nodes           map[string]*Node
-	graph           *dot.Graph
-	info            Analytics
-	showEdgesLabels bool // Show Labels on Edges? Can be unreadable
+	nodes   map[string]*Node
+	graph   *dot.Graph
+	info    Analytics
+	options RenpyGraphOptions
+}
+
+// RenpyGraphOptions are options that can be set to make a more customizable graph
+type RenpyGraphOptions struct {
+	ShowEdgesLabels bool // Show Labels on Edges? Can be unreadable but there is more information
+	ShowAtoms       bool // Show lonely nodes ? Might be useful but useless most of the time - and it avoids writing IGNORE tag everywhere
 }
 
 // NewGraph creates an empty graph
-func NewGraph(edges bool) RenpyGraph {
+func NewGraph(options RenpyGraphOptions) RenpyGraph {
 	g := dot.NewGraph(dot.Directed)
-	return RenpyGraph{nodes: make(map[string]*Node), graph: g, showEdgesLabels: edges}
+	return RenpyGraph{nodes: make(map[string]*Node), graph: g, options: options}
 }
 
 func randSeq(n int) string {
@@ -104,7 +110,9 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 	parentNode := g.nodes[label[0]]
 	childrenNode := g.nodes[label[1]]
 
-	fmt.Println(strings.Join(label, ` / `))
+	g.nodes[label[0]].notAlone = true
+	g.nodes[label[1]].notAlone = true
+
 	edge := g.graph.Edge(*parentNode.repr, *childrenNode.repr)
 
 	if tags.lowLink {
@@ -112,7 +120,7 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 	} else if tags.callLink {
 		edge.Attrs("style", "dashed", "color", "red")
 	}
-	if g.showEdgesLabels && len(label) == 3 {
+	if g.options.ShowEdgesLabels && len(label) >= 3 {
 		edge.Label(label[2])
 	}
 
@@ -122,13 +130,26 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 
 // CreateFile creates a file with the graph description in dot language
 // It is meant to be used on a computer
+// Calls (renpyGraph).String to output file
 func (g *RenpyGraph) CreateFile(fileName string) error {
-	b := []byte(g.graph.String())
+	b := []byte(g.String())
 	return ioutil.WriteFile(fileName, b, 0644)
 }
 
 // String returns a string with the graph description in dot language
 // It is meant to be used by other libraries or programs
+// It removes Atoms if specified in .options field
 func (g *RenpyGraph) String() string {
+	g.removeAtomsIfSpecified()
 	return g.graph.String()
+}
+
+func (g *RenpyGraph) removeAtomsIfSpecified() {
+	if !g.options.ShowAtoms {
+		for name, node := range g.nodes {
+			if !node.notAlone {
+				g.graph.DeleteNode(name)
+			}
+		}
+	}
 }

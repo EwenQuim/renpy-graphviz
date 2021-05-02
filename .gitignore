@@ -3,3 +3,4 @@
 !data/*.png
 .DS_store
 *.out
+vendor/

@@ -8,7 +8,7 @@ import (
 func TestEmptyGraph(t *testing.T) {
 	t.Parallel()
 
-	graph := Graph([]string{"nothing"}, false)
+	graph := Graph([]string{"nothing"}, RenpyGraphOptions{})
 
 	expectedGraph := RenpyGraph{}
 

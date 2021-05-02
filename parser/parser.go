@@ -15,9 +15,9 @@ type Context struct {
 
 // Graph creates a RenpyGraph from lines of script.
 // That's the main function
-func Graph(text []string, edges bool) RenpyGraph {
+func Graph(text []string, options RenpyGraphOptions) RenpyGraph {
 
-	g := NewGraph(edges)
+	g := NewGraph(options)
 
 	context := Context{}
 
