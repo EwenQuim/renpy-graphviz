@@ -11,11 +11,11 @@ import (
 
 func main() {
 
-	path := PlugCLI()
+	path, labelEdges := PlugCLI()
 
 	content := parser.GetRenpyContent(path)
 
-	graph := parser.Graph(content)
+	graph := parser.Graph(content, labelEdges)
 
 	graph.CreateFile("renpy-graphviz.dot")
 

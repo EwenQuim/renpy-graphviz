@@ -8,7 +8,7 @@ import (
 func TestEmptyGraph(t *testing.T) {
 	t.Parallel()
 
-	graph := Graph([]string{"nothing"})
+	graph := Graph([]string{"nothing"}, false)
 
 	expectedGraph := RenpyGraph{}
 
@@ -67,10 +67,15 @@ func TestUpdate(t *testing.T) {
 		},
 		// Implicit jump after call
 		{"label truc(variable=0) : #test parsing",
-			Context{},
-			Context{currentSituation: situationLabel, currentLabel: "truc"},
+			Context{currentSituation: situationPending, lastLabel: "third", linkedToLastLabel: true},
+			Context{currentSituation: situationLabel, currentLabel: "truc", lastLabel: "third", linkedToLastLabel: true, tags: Tag{lowLink: true}},
 		},
-		// ------- Independant testing -------
+		// Return statement acts like BREAK
+		{"return # breaks link",
+			Context{currentSituation: situationLabel, currentLabel: "truc", lastLabel: "third", linkedToLastLabel: true, tags: Tag{lowLink: true}},
+			Context{},
+		},
+		// ------- Independent testing -------
 		// Parsing
 		{"label truc(variable=0) : #test parsing",
 			Context{},
@@ -80,16 +85,16 @@ func TestUpdate(t *testing.T) {
 			Context{},
 			Context{currentSituation: situationJump, currentLabel: "far"},
 		},
-		{"	call scene # towards temporary label",
+		{"call scene # towards temporary label",
 			Context{},
 			Context{currentSituation: situationCall, currentLabel: "scene", linkedToLastLabel: true, tags: Tag{callLink: true}},
 		},
 		// Handling call with/out tags and args
-		{"	call scene(4) # towards temporary label",
+		{"call scene(4) # towards temporary label",
 			Context{},
 			Context{currentSituation: situationCall, currentLabel: "scene(4)", linkedToLastLabel: true, tags: Tag{callLink: true}},
 		},
-		{"	call scene(4) # renpy-graphviz: GAMEOVER",
+		{"call scene(4) # renpy-graphviz: GAMEOVER",
 			Context{lastLabel: "maybe_end"},
 			Context{currentSituation: situationCall, lastLabel: "maybe_end", currentLabel: "scene(4)", linkedToLastLabel: true, tags: Tag{callLink: true, gameOver: true}},
 		},
