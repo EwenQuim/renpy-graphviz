@@ -6,10 +6,11 @@ import (
 	"os"
 
 	"github.com/fatih/color"
+	"pkg.amethysts.studio/renpy-graphviz/parser"
 )
 
 // PlugCLI handles the Command Line Interface
-func PlugCLI() (string, bool) {
+func PlugCLI() (string, parser.RenpyGraphOptions) {
 
 	flag.Usage = func() {
 		color.Set(color.Bold)
@@ -22,15 +23,17 @@ func PlugCLI() (string, bool) {
 
 	}
 
-	var labelsEdge bool
+	var hideEdgesLabels bool
+	var showAtoms bool
 
-	flag.BoolVar(&labelsEdge, "e", false, "Do not display choice labels on edges")
+	flag.BoolVar(&showAtoms, "a", false, "Show atoms (lonely nodes)")
+	flag.BoolVar(&hideEdgesLabels, "e", false, "Hide choice labels on edges")
 
 	flag.Parse()
 
 	if len(flag.Args()) == 0 {
-		return ".", !labelsEdge
+		return ".", parser.RenpyGraphOptions{ShowEdgesLabels: !hideEdgesLabels, ShowAtoms: showAtoms}
 	}
-	return flag.Args()[0], !labelsEdge
+	return flag.Args()[0], parser.RenpyGraphOptions{ShowEdgesLabels: !hideEdgesLabels, ShowAtoms: showAtoms}
 
 }

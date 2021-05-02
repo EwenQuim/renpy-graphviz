@@ -16,7 +16,7 @@ func BenchmarkGraph(b *testing.B) {
 	var g RenpyGraph
 	renpyLines := GetRenpyContent("../testCases/complex")
 	for i := 0; i < b.N; i++ {
-		g = Graph(renpyLines, false)
+		g = Graph(renpyLines, RenpyGraphOptions{})
 	}
 	graph = g
 }

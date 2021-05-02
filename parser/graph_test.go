@@ -49,7 +49,7 @@ digraph  {
 
 	renpyLines := GetRenpyContent("../testCases/simple")
 
-	graphResult := Graph(renpyLines, false)
+	graphResult := Graph(renpyLines, RenpyGraphOptions{})
 	result := r.Replace(graphResult.String())
 
 	if result != expected {
@@ -84,7 +84,7 @@ digraph  {
 
 	renpyLines := GetRenpyContent("../testCases/complex")
 
-	graphResult := Graph(renpyLines, false)
+	graphResult := Graph(renpyLines, RenpyGraphOptions{})
 	result := r.Replace(graphResult.String())
 
 	if result != expected {
