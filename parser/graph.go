@@ -2,6 +2,7 @@ package parser
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"regexp"
@@ -20,28 +21,28 @@ type Node struct {
 
 // RenpyGraph is the graph of Ren'Py story structure
 type RenpyGraph struct {
-	nodes map[string]*Node
-	graph *dot.Graph
-	info  Analytics
+	nodes           map[string]*Node
+	graph           *dot.Graph
+	info            Analytics
+	showEdgesLabels bool // Show Labels on Edges? Can be unreadable
 }
-
-var replaceBlanks = regexp.MustCompile("[)(_=]")
 
 // NewGraph creates an empty graph
-func NewGraph() RenpyGraph {
+func NewGraph(edges bool) RenpyGraph {
 	g := dot.NewGraph(dot.Directed)
-	return RenpyGraph{nodes: make(map[string]*Node), graph: g}
+	return RenpyGraph{nodes: make(map[string]*Node), graph: g, showEdgesLabels: edges}
 }
 
-var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
 func randSeq(n int) string {
+	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	b := make([]rune, n)
 	for i := range b {
 		b[i] = letters[rand.Intn(len(letters))]
 	}
 	return string(b)
 }
+
+var replaceBlanks = regexp.MustCompile("[)(_=]")
 
 func beautifyLabel(label string, tags Tag) string {
 	labelName := label
@@ -103,12 +104,16 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 	parentNode := g.nodes[label[0]]
 	childrenNode := g.nodes[label[1]]
 
+	fmt.Println(strings.Join(label, ` / `))
 	edge := g.graph.Edge(*parentNode.repr, *childrenNode.repr)
 
 	if tags.lowLink {
 		edge.Attrs("style", "dotted")
 	} else if tags.callLink {
 		edge.Attrs("style", "dashed", "color", "red")
+	}
+	if g.showEdgesLabels && len(label) == 3 {
+		edge.Label(label[2])
 	}
 
 	parentNode.neighbors = append(parentNode.neighbors, label[1])

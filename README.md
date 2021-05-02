@@ -2,8 +2,9 @@
 
 [![Go Reference](https://pkg.go.dev/badge/pkg.amethysts.studio/renpy-graphviz.svg)](https://pkg.go.dev/pkg.amethysts.studio/renpy-graphviz)
 [![Go Report Card](https://goreportcard.com/badge/pkg.amethysts.studio/renpy-graphviz)](https://goreportcard.com/report/pkg.amethysts.studio/renpy-graphviz)
+[![Link to online demo](https://img.shields.io/badge/try-online-purple)](https://renpy.amethysts.studio)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ewenquim/renpy-graphviz/Distribute%20executable)
-[![Link to online demo](https://img.shields.io/badge/try-online-blue)](https://renpy.amethysts.studio)
+[![Coverage](http://gocover.io/_badge/pkg.amethysts.studio/renpy-graphviz)](http://gocover.io/pkg.amethysts.studio/renpy-graphviz)
 
 This is a tool written in Go that allows you to **visualise the routes** of your story.
 
@@ -94,16 +95,19 @@ Set some styles
     <td>
 
 ```renpy
-label one:
-  "blah blah"
+label routeone :  # renpy-graphviz: TITlE
+    d "Hello World!"
+    if condition:
+        jump bad_ending
 
-label two:
-"bla bla"
+label routeAlternative:
+    d "Normal bubble"
+    jump good_ending
 
-# renpy-graphviz: BREAK
 
-label three:
-"the end"
+label bad_ending: # renpy-graphviz: GAMEOVER
+    d "Bad ending"
+    return
 ```
 
   </td>

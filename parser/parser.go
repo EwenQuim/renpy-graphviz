@@ -1,10 +1,23 @@
 package parser
 
+// Context gives information about the state of the current line of the script
+type Context struct {
+	currentSituation  situation // current line situation : jump or label ?
+	currentLabel      string    // current line label. Empty if keyword is `situationPending`
+	linkedToLastLabel bool      // follows a label or not ?
+	lastLabel         string    // last label encountered. Empty if not linkedToLastLabel
+	indent            int       // 4 spaces = 1 indent
+	menuIndent        int       // negative = not inside a menu
+	lastChoice        string    // last choice in a menu
+	tags              Tag
+	// currentFile       string
+}
+
 // Graph creates a RenpyGraph from lines of script.
 // That's the main function
-func Graph(text []string) RenpyGraph {
+func Graph(text []string, edges bool) RenpyGraph {
 
-	g := NewGraph()
+	g := NewGraph(edges)
 
 	context := Context{}
 
@@ -22,13 +35,13 @@ func Graph(text []string) RenpyGraph {
 			analytics.labels++
 			g.AddNode(context.tags, context.currentLabel)
 			if context.linkedToLastLabel {
-				g.AddEdge(context.tags, context.lastLabel, context.currentLabel)
+				g.AddEdge(context.tags, context.lastLabel, context.currentLabel, context.lastChoice)
 			}
 
 		case situationJump:
 			analytics.jumps++
 			g.AddNode(context.tags, context.currentLabel)
-			g.AddEdge(context.tags, context.lastLabel, context.currentLabel)
+			g.AddEdge(context.tags, context.lastLabel, context.currentLabel, context.lastChoice)
 
 		case situationCall:
 			analytics.calls++
@@ -37,7 +50,7 @@ func Graph(text []string) RenpyGraph {
 				println("Error in your game: no label detected before the following line\n", line)
 				g.AddNode(Tag{}, context.lastLabel) //Useless but security in case the game isn't well structured
 			}
-			g.AddEdge(context.tags, context.lastLabel, context.currentLabel)
+			g.AddEdge(context.tags, context.lastLabel, context.currentLabel, context.lastChoice)
 		}
 
 	}
@@ -54,13 +67,18 @@ func (context *Context) update(line string, detect customRegexes) {
 
 	context.handleTags(line)
 
+	context.indent = detect.getIndent(line)
+	if -1 < context.indent && context.indent <= context.menuIndent {
+		context.menuIndent = 0
+		context.lastChoice = ""
+	}
+
 	// Handles keywords
 	if !context.tags.ignore {
-		if context.tags.breakFlow {
+		if context.tags.breakFlow || detect.returns.MatchString(line) {
 			context.lastLabel = ""
 			context.linkedToLastLabel = false
-		}
-		if detect.comment.MatchString(line) {
+		} else if detect.comment.MatchString(line) {
 			// COMMENTS
 		} else if detect.label.MatchString(line) {
 			// LABEL
@@ -93,6 +111,12 @@ func (context *Context) update(line string, detect customRegexes) {
 			context.currentSituation = situationCall
 			context.linkedToLastLabel = true
 			context.tags.callLink = true
+		} else if detect.menu.MatchString(line) {
+			// MENU
+			context.menuIndent = context.indent
+		} else if context.menuIndent < context.indent && detect.choice.MatchString(line) {
+			// CHOICE
+			context.lastChoice = detect.getChoice(line) //detect.choice.FindStringSubmatch(line)[1]
 
 		} else if context.lastLabel != "" {
 			// USUAL VN

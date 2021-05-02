@@ -2,9 +2,13 @@ package parser
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 )
 
+// real tests for utils functions
+
+// utils for test functions
 func (c *Context) String() string {
 	str := ""
 	if c.currentSituation != "" {
@@ -19,6 +23,7 @@ func (c *Context) String() string {
 	if c.linkedToLastLabel {
 		str += " linked to last label"
 	}
+	str += strconv.Itoa(c.indent)
 
 	return str
 }
