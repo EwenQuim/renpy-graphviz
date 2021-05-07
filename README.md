@@ -6,7 +6,7 @@
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ewenquim/renpy-graphviz/Distribute%20executable)
 [![Coverage](http://gocover.io/_badge/pkg.amethysts.studio/renpy-graphviz)](http://gocover.io/pkg.amethysts.studio/renpy-graphviz)
 
-This is a tool written in Go that allows you to **visualise the routes** of your story.
+This is a tool written in Go that allows you to **visualise the routes** of your Ren'Py story.
 
 ![](./data/the_question.jpg)
 _Routes of the Question, the classic Ren'Py example_
@@ -14,8 +14,9 @@ _Routes of the Question, the classic Ren'Py example_
 - [Ren'Py graph vizualiser](#renpy-graph-vizualiser)
   - [Examples](#examples)
   - [How to use](#how-to-use)
+    - [Online version -try online!](#online-version--try-online)
+    - [Software version -install it on your computer](#software-version--install-it-on-your-computer)
     - [Go library](#go-library)
-  - [Online demo](#online-demo)
   - [Tags](#tags)
     - [TITLE & GAMEOVER](#title--gameover)
     - [BREAK](#break)
@@ -34,25 +35,29 @@ _An extract from my personnal VN, [Coalescence](https://play.google.com/store/ap
 
 ## How to use
 
+### Online version -try online!
+
+You can test this tool in the browser. If you really want to get `.png` files, please download the software version. Note that I will not maintain this website, it is not guaranteed to represent the library 100%.
+
+https://renpy.amethysts.studio
+
+### Software version -install it on your computer
+
 - [**Download**](https://github.com/EwenQuim/renpy-graphviz/releases) latest version
 - **Move** the program in your game folder
-- **Run it** from the command line
+- **Run it** from the command line `./renpy-graphviz` or by clicking on the icon in your file manager
   - you might have to give yourself the permissions: don't worry my program isn't a virus ! Run `chmod +x renpy-graphviz*` on Unix.
 - `renpy-graphviz.png` just appeared, **enjoy** !
 
-### Go library
+_The command line version is more powerful as you can add flags and a path, see the documentation by typing `renpy-graphviz -h`_
 
-If you are a Go user and want to integrate this in a lib/program, it is totally possible. The `/parser` module is very powerful.
+### Go library
 
 ```
 go get pkg.amethysts.studio/renpy-graphviz
 ```
 
-## Online demo
-
-You can test this tool in the browser. If you really want to get `.png` files, please download. Note that I will not maintain this website, it is not guaranteed to represent the library 100%.
-
-https://renpy.amethysts.studio
+If you are a Go user and want to integrate this in a Go lib/program, it is totally possible. The `/parser` module is very powerful.
 
 ## Tags
 
@@ -62,17 +67,13 @@ Ren'Py scripting isn't strict, so sometimes there are situations the script cann
 label chapter_1: #renpy-graphviz: TITLE
 ```
 
-Before tags, you must write `renpy-graphviz` in a comment to ensure there are no collision with existing words in your VN.
-
-Here are the tags available
+Before tags, you must write `renpy-graphviz` in a comment to ensure there are no collision with existing words in your VN. Here are the tags available:
 
 - [TITLE](#TITLE-&-Gameover): style for chapters
 - [BREAK](#BREAK): breaks the current flow, for parallel labels for example
 - [IGNORE](#IGNORE): ignores the current label. Jumps to this label still exist
 - [GAMEOVER](#TITLE-&-Gameover): style for endings
 - [SKIPLINK](#SKIPLINK): avoid long arrows by creating a "shortcut" - read the doc below before using
-
-Case, spaces and separators are handled very loosely, don't worry about it.
 
 ### TITLE & GAMEOVER
 
@@ -242,23 +243,7 @@ label six:
 
 This require your VN to be structured in a certain way, so it's possible that it isn't perfect for you. Feel free to raise an issue [here](https://github.com/EwenQuim/renpy-graphviz/issues), or to change your VN structure.
 
-The program works only for scripts that do not stack call statement, i.e. the program expects a `break` statement before any other `label`/`call` if you used call to get there.
-
-Works:
-
-```renpy
-label start:
-  eileen "hello"
-  call second
-  eileen "I'm back"
-
-# renpy-graphviz: BREAK <- recommended here but not mandatory, see Tags section
-label second:
-  eileen "inside a CALL statement"
-  break # <- works !!!
-```
-
-Does NOT work:
+Example:
 
 ```renpy
 label start:
@@ -274,6 +259,8 @@ label second:
 label third_label:
 ```
 
+It does not handle screens for the moments, but **your contribution to the project** are appreciated!
+
 ## LICENSE
 
 This program is free and under the [AGPLv3 license](https://www.gnu.org/licenses/agpl-3.0.en.html).
@@ -282,4 +269,4 @@ Beware, if you use this program, you must **credit it somewhere on your game**.
 
 > Used Renpy Graph Vizualiser from EwenQuim
 
-Enjoy!
+Enjoy! ❤️
