@@ -24,19 +24,21 @@ type RenpyGraph struct {
 	nodes   map[string]*Node
 	graph   *dot.Graph
 	info    Analytics
-	options RenpyGraphOptions
+	Options RenpyGraphOptions
 }
 
 // RenpyGraphOptions are options that can be set to make a more customizable graph
 type RenpyGraphOptions struct {
 	ShowEdgesLabels bool // Show Labels on Edges? Can be unreadable but there is more information
 	ShowAtoms       bool // Show lonely nodes ? Might be useful but useless most of the time - and it avoids writing IGNORE tag everywhere
+	Silent          bool // Display .dot graph in the stdout
+	OpenFile        bool // Open the image in the default image viewer or not ?
 }
 
 // NewGraph creates an empty graph
 func NewGraph(options RenpyGraphOptions) RenpyGraph {
 	g := dot.NewGraph(dot.Directed)
-	return RenpyGraph{nodes: make(map[string]*Node), graph: g, options: options}
+	return RenpyGraph{nodes: make(map[string]*Node), graph: g, Options: options}
 }
 
 func randSeq(n int) string {
@@ -120,7 +122,7 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 	} else if tags.callLink {
 		edge.Attrs("style", "dashed", "color", "red")
 	}
-	if g.options.ShowEdgesLabels && len(label) >= 3 {
+	if g.Options.ShowEdgesLabels && len(label) >= 3 {
 		edge.Label(label[2])
 	}
 
@@ -138,14 +140,14 @@ func (g *RenpyGraph) CreateFile(fileName string) error {
 
 // String returns a string with the graph description in dot language
 // It is meant to be used by other libraries or programs
-// It removes Atoms if specified in .options field
+// It removes Atoms if specified in .Options field
 func (g *RenpyGraph) String() string {
 	g.removeAtomsIfSpecified()
 	return g.graph.String()
 }
 
 func (g *RenpyGraph) removeAtomsIfSpecified() {
-	if !g.options.ShowAtoms {
+	if !g.Options.ShowAtoms {
 		for name, node := range g.nodes {
 			if !node.notAlone {
 				g.graph.DeleteNode(name)

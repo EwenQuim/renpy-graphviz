@@ -4,8 +4,7 @@ This package helps understand a Ren'Py source code by drawing a graph from the s
 package main
 
 import (
-	"fmt"
-
+	"github.com/skratchdot/open-golang/open"
 	"pkg.amethysts.studio/renpy-graphviz/parser"
 )
 
@@ -21,6 +20,8 @@ func main() {
 
 	readDotFileToDrawGraph("renpy-graphviz.dot", "renpy-graphviz.png")
 
-	fmt.Println("Done.")
+	if graph.Options.OpenFile {
+		open.Run("renpy-graphviz.png")
+	}
 
 }

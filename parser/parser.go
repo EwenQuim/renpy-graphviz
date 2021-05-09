@@ -1,5 +1,7 @@
 package parser
 
+import "fmt"
+
 // Context gives information about the state of the current line of the script
 type Context struct {
 	currentSituation  situation // current line situation : jump or label ?
@@ -57,6 +59,10 @@ func Graph(text []string, options RenpyGraphOptions) RenpyGraph {
 
 	// Plug analytics into the model
 	g.info = analytics
+
+	if !g.Options.Silent {
+		fmt.Println(g.String())
+	}
 	return g
 }
 

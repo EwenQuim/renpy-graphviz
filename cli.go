@@ -25,15 +25,20 @@ func PlugCLI() (string, parser.RenpyGraphOptions) {
 
 	var hideEdgesLabels bool
 	var showAtoms bool
+	var silent bool
+	var openFile bool
 
 	flag.BoolVar(&showAtoms, "a", false, "Show atoms (lonely nodes)")
 	flag.BoolVar(&hideEdgesLabels, "e", false, "Hide choice labels on edges")
+	flag.BoolVar(&silent, "s", false, "Display nothing to the stdout")
+	flag.BoolVar(&openFile, "o", false, "Open file in default image viewer")
 
 	flag.Parse()
 
-	if len(flag.Args()) == 0 {
-		return ".", parser.RenpyGraphOptions{ShowEdgesLabels: !hideEdgesLabels, ShowAtoms: showAtoms}
+	path := "."
+	if len(flag.Args()) > 0 {
+		path = flag.Args()[0]
 	}
-	return flag.Args()[0], parser.RenpyGraphOptions{ShowEdgesLabels: !hideEdgesLabels, ShowAtoms: showAtoms}
+	return path, parser.RenpyGraphOptions{ShowEdgesLabels: !hideEdgesLabels, ShowAtoms: showAtoms, Silent: silent, OpenFile: openFile}
 
 }
