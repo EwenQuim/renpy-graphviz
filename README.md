@@ -22,6 +22,8 @@ _Routes of the Question, the classic Ren'Py example_
     - [BREAK](#break)
     - [IGNORE](#ignore)
     - [SKIPLINK](#skiplink)
+    - [FAKE_LABEL(a) & FAKE_JUMP(a, b)](#fake_labela--fake_jumpa-b)
+    - [INGAME_LABEL(a) & INGAME_JUMP(b)](#ingame_labela--ingame_jumpb)
   - [Limitations](#limitations)
   - [LICENSE](#license)
 
@@ -74,6 +76,8 @@ Before tags, you must write `renpy-graphviz` in a comment to ensure there are no
 - [IGNORE](#IGNORE): ignores the current label. Jumps to this label still exist
 - [GAMEOVER](#TITLE-&-Gameover): style for endings
 - [SKIPLINK](#SKIPLINK): avoid long arrows by creating a "shortcut" - read the doc below before using
+- [FAKE_LABEL(label_name)](#SKIPLINK):
+-
 
 ### TITLE & GAMEOVER
 
@@ -239,25 +243,92 @@ label six:
 </tbody>
 </table>
 
-## Limitations
+### FAKE_LABEL(a) & FAKE_JUMP(a, b)
 
-This require your VN to be structured in a certain way, so it's possible that it isn't perfect for you. Feel free to raise an issue [here](https://github.com/EwenQuim/renpy-graphviz/issues), or to change your VN structure.
+Creates a node or an arrow in the graph without having to create `label thing` in your Ren'Py script. It is disconnected from the normal flow (see example below).
 
-Example:
+<table>
+<thead>
+  <tr>
+    <th>FAKES</th>
+    <th>script.rpy</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>
+  
+![](data/example-fakes.png)
+  </td>
+    <td>
 
 ```renpy
-label start:
-  eileen "hello"
-  call second
-  eileen "I'm back"
+# renpy-graphviz: FAKE_LABEL(a) TITLE we can mix some tags on the same line
+# renpy-graphviz: FAKE_JUMP(b, c) if b/c does not exists, it creates it
 
-# renpy-graphviz: BREAK <- recommended here but not mandatory, see Tags section
-label second:
-  eileen "inside a CALL statement"
-  call / jump third_label # <- Unexpected behaviour depending of the structure of your story
+label real_1:
+# There will be no 'indirect link' from `real_1` to `d`
+# renpy-graphviz: FAKE_LABEL(d)
 
-label third_label:
+# Implicit jump from `real_one` to `real_two`
+# It's the normal behaviour as `d` is ignored by the normal flow
+label real_2:
+
+# No jump from `real_two` to `a` or `d`
+# renpy-graphviz: FAKE_JUMP(a, d)
+
 ```
+
+  </td>
+  </tr>
+</tbody>
+</table>
+
+### INGAME_LABEL(a) & INGAME_JUMP(b)
+
+Same that above but interacts with the normal flow.
+
+<table>
+<thead>
+  <tr>
+    <th>INGAMES</th>
+    <th>script.rpy</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>
+  
+![](data/example-ingames.png)
+  </td>
+    <td>
+
+```renpy
+# renpy-graphviz: INGAME_LABEL(start)
+# renpy-graphviz: INGAME_JUMP(option_one)
+
+# Creates a link from `start` to `option_two` even if
+# there was a jump before -like normal jumps
+# renpy-graphviz: INGAME_JUMP(option_two)
+
+label option_one:
+    "dialogue"
+
+# should follow the previous label (implicit jump)
+# renpy-graphviz: INGAME_LABEL(indirect_label)
+
+# jumps from `indirect_label` to `option_two`
+    jump option_two
+```
+
+  </td>
+  </tr>
+</tbody>
+</table>
+
+## Limitations
+
+This require your VN to be structured in a certain way, so it's possible that it isn't perfect for you. Feel free to raise an issue [here](https://github.com/EwenQuim/renpy-graphviz/issues), or to change your VN structure, by adding tags manually.
 
 It does not handle screens for the moments, but **your contribution to the project** are appreciated!
 

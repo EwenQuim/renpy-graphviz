@@ -9,31 +9,26 @@ type customRegexes struct {
 	label   *regexp.Regexp
 	jump    *regexp.Regexp
 	call    *regexp.Regexp
-	comment *regexp.Regexp
+	comment *regexp.Regexp // line with only blank spaces and comments -will be ignored
 	returns *regexp.Regexp
 	menu    *regexp.Regexp
 	spaces  *regexp.Regexp
 	choice  *regexp.Regexp
+	tags    *regexp.Regexp
 }
 
+// should be called rarely
 func initializeDetectors() customRegexes {
-	label := regexp.MustCompile(`^\s*label ([a-zA-Z0-9_-]+)(?:\([a-zA-Z0-9_= \-"']*\))?\s*:\s*(?:#.*)?$`)
-	jump := regexp.MustCompile(`^\s*jump ([a-zA-Z0-9_]+)\s*(?:#.*)?$`)
-	call := regexp.MustCompile(`^\s*call (([a-zA-Z0-9_-]+)(?:\([a-zA-Z0-9_= \-"']*\))?)\s*(?:#.*)?$`)
-	menu := regexp.MustCompile(`^\s*menu\s*:\s*(?:#.*)?$`)
-	choice := regexp.MustCompile(`^\s*(?:"(.*?)"|'(.*?)').*:\s*(?:#.*)?$`)
-	returns := regexp.MustCompile(`^\s{0,4}return\s*(?:#.*)?$`)
-	spaces := regexp.MustCompile(`^(\s*).*$`)
-	comment := regexp.MustCompile(`^\s*(#.*)?$`)
 	return customRegexes{
-		label,
-		jump,
-		call,
-		comment,
-		returns,
-		menu,
-		spaces,
-		choice,
+		label:   regexp.MustCompile(`^\s*label ([a-zA-Z0-9._-]+)(?:\([a-zA-Z0-9_= \-"']*\))?\s*:\s*(?:#.*)?$`),
+		jump:    regexp.MustCompile(`^\s*jump ([a-zA-Z0-9_.]+)\s*(?:#.*)?$`),
+		call:    regexp.MustCompile(`^\s*call (([a-zA-Z0-9_-]+)(?:\([a-zA-Z0-9_= \-"']*\))?)\s*(?:#.*)?$`),
+		comment: regexp.MustCompile(`^\s*(#.*)?$`),
+		returns: regexp.MustCompile(`^\s{0,4}return\s*(?:#.*)?$`),
+		menu:    regexp.MustCompile(`^\s*menu.*:\s*(?:#.*)?$`),
+		spaces:  regexp.MustCompile(`^(\s*).*$`),
+		choice:  regexp.MustCompile(`^\s*(?:"(.*?[^\\])"|'(.*?[^\\])').*:\s*(?:#.*)?$`),
+		tags:    regexp.MustCompile(`(\w+)(?: *\( *(\w+)(?: *, *(\w+))? *\))?`), // https://regex101.com/r/1vvDF1/1
 	}
 }
 
@@ -50,9 +45,10 @@ func (c customRegexes) getChoice(line string) string {
 	if len(sub) <= 1 {
 		panic("getChoice(): error in choice parsing")
 	}
-	for _, e := range sub[1:] {
+	// `sub` can be of the form "choice" (index 0) or 'choice' (index 1)
+	for _, e := range sub[1:] { // sub[0] is the match, index > 1 are regex groups
 		if strings.TrimSpace(e) != "" {
-			return e
+			return strings.ReplaceAll(e, "\\", "")
 		}
 	}
 	panic("getChoice(): error in choice parsing")

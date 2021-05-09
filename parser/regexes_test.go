@@ -50,7 +50,9 @@ func TestMenuStatement(t *testing.T) {
 		{1, "	menu :", true},
 		{2, "	menu : # comments", true},
 		{3, "	eileen \"I want the menu:\" ", false},
-		{2, "	 # comments menu:", false},
+		{4, "	 # comments menu:", false},
+		{5, "	  menu menu_label:", true},
+		{6, "menu (\"jfk\", screen=\"airport\"):", true},
 	}
 	for _, tc := range testCases {
 		t.Run(fmt.Sprintf("Running test %v", tc.id), func(t *testing.T) {
@@ -105,6 +107,7 @@ func TestChoiceRegex(t *testing.T) {
 		{4, "	j \"Exact.\" ", false, ""},
 		{5, "	 \"exact\" # comments return", false, ""},
 		{6, "	\"It's a videogame.\":", true, "It's a videogame."},
+		{7, "	\"\\\"It's a videogame.\\\"\":", true, "\"It's a videogame.\""},
 	}
 	for _, tc := range testCases {
 		t.Run(fmt.Sprintf("Running test %v", tc.id), func(t *testing.T) {
@@ -114,7 +117,7 @@ func TestChoiceRegex(t *testing.T) {
 			} else if tc.updatedContext {
 				if choice := detect.getChoice(tc.line); choice != tc.choice {
 					// t.Logf("%+v", sub)
-					t.Errorf("Error in test %v, %v != %v", tc.id, choice, tc.choice)
+					t.Errorf("Error in test %v \n%v != %v", tc.id, choice, tc.choice)
 				}
 			}
 		})

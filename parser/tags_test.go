@@ -7,6 +7,7 @@ import (
 
 func TestHandleTags(t *testing.T) {
 	t.Parallel()
+	detect := initializeDetectors()
 
 	testCases := []struct {
 		id         int
@@ -31,13 +32,23 @@ func TestHandleTags(t *testing.T) {
 		{7, " label truc: # renpY-grapHvIz: GAMEOVER", Tag{gameOver: true}},
 		// SKIPLINK
 		{8, " label truc: # renpY-grapHvIz: SKIPLINK", Tag{skipLink: true}},
+		// INGAME_LABEL
+		{9, " # renpy-graphviz: INGAME_LABEL(fake_label)", Tag{inGameLabel: true}},
+		// INGAME_JUMP
+		{10, " # renpy-graphviz: INGAME_JUMP(to_label)", Tag{inGameJump: true}},
+		{10, " # renpy-graphviz: INGAME_JUMP ( to_label ) ", Tag{inGameJump: true}},
+		// FAKE_LABEL
+		{11, " # renpy-graphviz: FAKE_LABEL(label_name)", Tag{fakeLabel: true}},
+		{11, " # renpy-graphviz: FAKE_LABEL(label_name)", Tag{fakeLabel: true}},
+		// FAKE_JUMP
+		{12, " # renpy-graphviz: FAKE_JUMP(fake_label,to_label)", Tag{fakeJump: true}},
+		{12, " # renpy-graphviz: FAKE_JUMP ( fake_label , to_label ) ", Tag{fakeJump: true}},
 	}
 
 	for _, tc := range testCases {
 		t.Run(fmt.Sprintf("Running test %v", tc.id), func(t *testing.T) {
-			t.Parallel()
 			context := Context{}
-			context.handleTags(tc.line)
+			context.handleTags(tc.line, detect)
 			if context.tags != tc.updatedTag {
 				t.Errorf("Error in tags test %v:\n got %+v\nwant %+v", tc.id, context.tags, tc.updatedTag)
 			}

@@ -11,7 +11,9 @@ type Context struct {
 	indent            int       // 4 spaces = 1 indent
 	menuIndent        int       // negative = not inside a menu
 	lastChoice        string    // last choice in a menu
-	tags              Tag
+	tags              Tag       // see the Tag struct
+	tagLabel          string    // fake label written in a comment
+	tagJump           string    // fake jump destination written in a comment
 	// currentFile       string
 }
 
@@ -53,6 +55,14 @@ func Graph(text []string, options RenpyGraphOptions) RenpyGraph {
 				g.AddNode(Tag{}, context.lastLabel) //Useless but security in case the game isn't well structured
 			}
 			g.AddEdge(context.tags, context.lastLabel, context.currentLabel, context.lastChoice)
+
+		case situationFakeLabel:
+			g.AddNode(context.tags, context.tagLabel)
+
+		case situationFakeJump:
+			g.AddNode(context.tags, context.tagLabel)
+			g.AddNode(context.tags, context.tagJump)
+			g.AddEdge(context.tags, context.tagLabel, context.tagJump, context.lastChoice)
 		}
 
 	}
@@ -71,9 +81,10 @@ func (context *Context) update(line string, detect customRegexes) {
 
 	context.init()
 
-	context.handleTags(line)
+	context.handleTags(line, detect)
 
 	context.indent = detect.getIndent(line)
+	// After a menu (indentation before menu indentation)
 	if -1 < context.indent && context.indent <= context.menuIndent {
 		context.menuIndent = 0
 		context.lastChoice = ""
@@ -81,14 +92,28 @@ func (context *Context) update(line string, detect customRegexes) {
 
 	// Handles keywords
 	if !context.tags.ignore {
-		if context.tags.breakFlow || detect.returns.MatchString(line) {
+
+		switch {
+
+		// BREAK -before COMMENTS cause this can be a tag-only line
+		case context.tags.breakFlow || detect.returns.MatchString(line):
 			context.lastLabel = ""
 			context.linkedToLastLabel = false
-		} else if detect.comment.MatchString(line) {
-			// COMMENTS
-		} else if detect.label.MatchString(line) {
-			// LABEL
-			labelName := detect.label.FindStringSubmatch(line)[1]
+
+		// FAKES -before COMMENTS cause this can be a tag-only line
+		case context.tags.fakeLabel:
+			context.currentSituation = situationFakeLabel
+		case context.tags.fakeJump:
+			context.currentSituation = situationFakeJump
+
+		// LABEL -before COMMENTS cause this can be a tag-only line
+		case detect.label.MatchString(line) || context.tags.inGameLabel:
+			var labelName string
+			if context.tags.inGameLabel {
+				labelName = context.tagLabel
+			} else {
+				labelName = detect.label.FindStringSubmatch(line)[1]
+			}
 
 			context.currentLabel = labelName
 			context.currentSituation = situationLabel
@@ -96,41 +121,51 @@ func (context *Context) update(line string, detect customRegexes) {
 				context.tags.lowLink = true
 			}
 
-		} else if detect.jump.MatchString(line) {
-			// JUMP
-			labelName := detect.jump.FindStringSubmatch(line)[1]
+		// JUMP -before COMMENTS cause this can be a tag-only line
+		case detect.jump.MatchString(line) || context.tags.inGameJump:
+			var labelName string
+			if context.tags.inGameJump {
+				labelName = context.tagJump
+			} else {
+				labelName = detect.jump.FindStringSubmatch(line)[1]
+			}
 			if context.tags.skipLink {
 				labelName = labelName + randSeq(5)
 			}
-
 			context.currentLabel = labelName
 			context.currentSituation = situationJump
 			context.linkedToLastLabel = false
-		} else if detect.call.MatchString(line) {
-			// CALL
+
+		// COMMENTS
+		case detect.comment.MatchString(line):
+
+		// CALL
+		case detect.call.MatchString(line):
 			labelName := detect.call.FindStringSubmatch(line)[1]
 			if context.tags.skipLink {
 				labelName = labelName + randSeq(5)
 			}
-
 			context.currentLabel = labelName
 			context.currentSituation = situationCall
 			context.linkedToLastLabel = true
 			context.tags.callLink = true
-		} else if detect.menu.MatchString(line) {
-			// MENU
+
+		// MENU
+		case detect.menu.MatchString(line):
 			context.menuIndent = context.indent
-		} else if context.menuIndent < context.indent && detect.choice.MatchString(line) {
-			// CHOICE
+
+		// CHOICE
+		case context.menuIndent < context.indent && detect.choice.MatchString(line):
 			context.lastChoice = detect.getChoice(line) //detect.choice.FindStringSubmatch(line)[1]
 
-		} else if context.lastLabel != "" {
-			// USUAL VN
+		// USUAL VN
+		case context.lastLabel != "":
 			// a label is available (from before in the file) and we are after a jump that is not followed by comments or a label
 			context.linkedToLastLabel = true
+
+		default:
 		}
 	}
-
 }
 
 // initialises the context object before reading a new line, with the context of the previous line
@@ -151,6 +186,8 @@ func (context *Context) init() {
 
 	context.currentLabel = ""
 	context.currentSituation = situationPending
+	context.tagLabel = ""
+	context.tagJump = ""
 
 	// Reset all tags
 	context.tags = Tag{}
