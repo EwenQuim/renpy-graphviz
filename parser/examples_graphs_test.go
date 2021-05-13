@@ -14,7 +14,7 @@ func TestExampleGraphs(t *testing.T) {
 		options       RenpyGraphOptions
 		expectedGraph string
 	}{
-		{"../testCases/tagsInGame", RenpyGraphOptions{Silent: true, ShowAtoms: false}, `
+		{"../testCases/tagsInGame", RenpyGraphOptions{Silent: true, ShowAtoms: true}, `
 digraph  {
 
 	n5[label="ending"];
