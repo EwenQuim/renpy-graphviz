@@ -76,8 +76,8 @@ Before tags, you must write `renpy-graphviz` in a comment to ensure there are no
 - [IGNORE](#IGNORE): ignores the current label. Jumps to this label still exist
 - [GAMEOVER](#TITLE-&-Gameover): style for endings
 - [SKIPLINK](#SKIPLINK): avoid long arrows by creating a "shortcut" - read the doc below before using
-- [FAKE_LABELS](#FAKE_LABEL(a)-&-FAKE_JUMP(a,-b)): simulates labels and jumps
-- [INGAME_LABELS](#INGAME_LABEL(a)-&-INGAME_JUMP(b)): same but acts like/with real label/jumps
+- [FAKE_LABELS](#fake_labela--fake_jumpa-b): simulates labels and jumps
+- [INGAME_LABELS](#ingame_labela--ingame_jumpb): same but interacts with real label/jumps
 
 ### TITLE & GAMEOVER
 
@@ -245,7 +245,7 @@ label six:
 
 ### FAKE_LABEL(a) & FAKE_JUMP(a, b)
 
-Creates a node or an arrow in the graph without having to create `label thing` in your Ren'Py script. It is disconnected from the normal flow (see example below).
+Creates a node or an arrow in the graph without having to create `label thing` in your Ren'Py script. It is disconnected from the "normal flow", `label` and `jump` in your script (see example below).
 
 <table>
 <thead>
@@ -264,9 +264,9 @@ Creates a node or an arrow in the graph without having to create `label thing` i
 
 ```renpy
 # You can mix different tags on the same line
-# renpy-graphviz: FAKE_LABEL(a) TITLE 
+# renpy-graphviz: FAKE_LABEL(a) TITLE
 # If b/c does not exists, it creates it
-# renpy-graphviz: FAKE_JUMP(b, c) 
+# renpy-graphviz: FAKE_JUMP(b, c)
 
 label real_1:
 # There will be no 'indirect link' from `real_1` to `d`
@@ -288,7 +288,7 @@ label real_2:
 
 ### INGAME_LABEL(a) & INGAME_JUMP(b)
 
-Same that above but interacts with the normal flow.
+Same that above but interacts with the "normal flow", your `label`, `call` and `jump` from your Ren'Py script.
 
 <table>
 <thead>
