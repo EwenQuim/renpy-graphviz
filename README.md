@@ -76,8 +76,8 @@ Before tags, you must write `renpy-graphviz` in a comment to ensure there are no
 - [IGNORE](#IGNORE): ignores the current label. Jumps to this label still exist
 - [GAMEOVER](#TITLE-&-Gameover): style for endings
 - [SKIPLINK](#SKIPLINK): avoid long arrows by creating a "shortcut" - read the doc below before using
-- [FAKE_LABEL(label_name)](#SKIPLINK):
--
+- [FAKE_LABELS](#FAKE_LABEL(a)-&-FAKE_JUMP(a,-b)): simulates labels and jumps
+- [INGAME_LABELS](#INGAME_LABEL(a)-&-INGAME_JUMP(b)): same but acts like/with real label/jumps
 
 ### TITLE & GAMEOVER
 
@@ -263,15 +263,17 @@ Creates a node or an arrow in the graph without having to create `label thing` i
     <td>
 
 ```renpy
-# renpy-graphviz: FAKE_LABEL(a) TITLE we can mix some tags on the same line
-# renpy-graphviz: FAKE_JUMP(b, c) if b/c does not exists, it creates it
+# You can mix different tags on the same line
+# renpy-graphviz: FAKE_LABEL(a) TITLE 
+# If b/c does not exists, it creates it
+# renpy-graphviz: FAKE_JUMP(b, c) 
 
 label real_1:
 # There will be no 'indirect link' from `real_1` to `d`
 # renpy-graphviz: FAKE_LABEL(d)
 
 # Implicit jump from `real_one` to `real_two`
-# It's the normal behaviour as `d` is ignored by the normal flow
+# (normal behaviour as `d` is ignored by the normal flow)
 label real_2:
 
 # No jump from `real_two` to `a` or `d`
@@ -307,8 +309,8 @@ Same that above but interacts with the normal flow.
 # renpy-graphviz: INGAME_LABEL(start)
 # renpy-graphviz: INGAME_JUMP(option_one)
 
-# Creates a link from `start` to `option_two` even if
-# there was a jump before -like normal jumps
+# Creates a link from `start` to `option_two` even
+# if there was a jump before -like normal jumps
 # renpy-graphviz: INGAME_JUMP(option_two)
 
 label option_one:
