@@ -3,6 +3,8 @@ package parser
 import (
 	"strings"
 	"testing"
+
+	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
 func TestExampleGraphs(t *testing.T) {
@@ -12,7 +14,7 @@ func TestExampleGraphs(t *testing.T) {
 		options       RenpyGraphOptions
 		expectedGraph string
 	}{
-		{"../testCases/tagsInGame", RenpyGraphOptions{Silent: true, ShowAtoms: true}, `
+		{"../testCases/tagsInGame", RenpyGraphOptions{Silent: true, ShowAtoms: false}, `
 digraph  {
 
 	n5[label="ending"];
@@ -84,6 +86,8 @@ digraph  {
 	
 }	`},
 	}
+	dmp := diffmatchpatch.New()
+
 	r := strings.NewReplacer(" ", "", "\t", "", "\n", "")
 	for _, tc := range testCases {
 		t.Run(tc.pathToScript, func(t *testing.T) {
@@ -93,7 +97,9 @@ digraph  {
 			result := graphResult.String()
 
 			if r.Replace(result) != r.Replace(tc.expectedGraph) {
-				t.Fatalf("\nunexpected graph: \nstart--->%v<---end\nexpected:\nstart--->%v<---end", result, tc.expectedGraph)
+				diffs := dmp.DiffMain(result, tc.expectedGraph, false)
+
+				t.Fatalf(dmp.DiffPrettyText(diffs))
 			}
 		})
 	}
