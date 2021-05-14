@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/emicklei/dot v0.16.0
-	github.com/fatih/color v1.10.0
+	github.com/fatih/color v1.11.0
 	github.com/goccy/go-graphviz v0.0.9
 	github.com/sergi/go-diff v1.2.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
