@@ -1,0 +1,7 @@
+*.gv
+.vscode/
+*.png
+!data/*.png
+.DS_store
+*.out
+vendor/

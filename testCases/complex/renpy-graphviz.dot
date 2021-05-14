@@ -1,0 +1,17 @@
+digraph  {
+	
+	n2[color="red",label="bad ending",shape="septagon",style="bold"];
+	n4[color="purple",fontsize="16",label="GOOD ENDING",shape="rectangle",style="bold"];
+	n5[label="route 2"];
+	n3[label="routeAlternative"];
+	n1[color="purple",fontsize="16",label="ROUTEONE",shape="rectangle",style="bold"];
+	n6[color="purple",fontsize="16",label="STAAA AA 6 RT",shape="rectangle",style="bold"];
+	n5->n2[style="dotted"];
+	n3->n4;
+	n1->n2;
+	n1->n3[style="dotted"];
+	n6->n1;
+	n6->n5;
+	n6->n3;
+	
+}

@@ -1,0 +1,22 @@
+digraph  {
+	
+	n1[label="a"];
+	n2[label="b"];
+	n3[label="c"];
+	n4[label="d"];
+	n5[label="e"];
+	n6[label="f"];
+	n9[label="fake one"];
+	n11[label="fake two"];
+	n12[label="fake two destination"];
+	n7[label="g"];
+	n8[label="real one"];
+	n10[label="real two"];
+	n2->n3[label=""];
+	n4->n6[label=""];
+	n6->n7[label=""];
+	n11->n12[label=""];
+	n7->n5[label=""];
+	n8->n10[label="",style="dotted"];
+	
+}
