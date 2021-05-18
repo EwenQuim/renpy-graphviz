@@ -84,7 +84,15 @@ digraph  {
 	n6->n5;
 	n6->n3;
 	
-}	`},
+}`},
+		{"../testCases/BOM", RenpyGraphOptions{Silent: true}, `
+digraph  {
+
+	n1[label="a"];
+	n2[label="b"];
+	n1->n2;
+
+}`},
 	}
 	dmp := diffmatchpatch.New()
 

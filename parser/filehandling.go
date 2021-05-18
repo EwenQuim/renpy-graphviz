@@ -2,6 +2,7 @@ package parser
 
 import (
 	"bufio"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -23,6 +24,18 @@ func GetRenpyContent(rootPath string) []string {
 			readFile, err := os.Open(file)
 			if err != nil {
 				log.Fatalf("failed to open file: %s", err)
+			}
+
+			var bom [3]byte
+			_, err = io.ReadFull(readFile, bom[:])
+			if err != nil {
+				log.Fatal(err)
+			}
+			if bom[0] != 0xef || bom[1] != 0xbb || bom[2] != 0xbf {
+				_, err = readFile.Seek(0, 0) // Not a BOM -- seek back to the beginning
+				if err != nil {
+					log.Fatal(err)
+				}
 			}
 
 			fileScanner := bufio.NewScanner(readFile)
