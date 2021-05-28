@@ -93,6 +93,14 @@ digraph  {
 	n1->n2;
 
 }`},
+		{"../testCases/jumpAfterReturn", RenpyGraphOptions{Silent: true}, `
+digraph  {
+
+	n1[label="a"];
+	n2[label="b"];
+	n1->n2;
+
+}`},
 	}
 	dmp := diffmatchpatch.New()
 
@@ -105,7 +113,7 @@ digraph  {
 			result := graphResult.String()
 
 			if r.Replace(result) != r.Replace(tc.expectedGraph) {
-				diffs := dmp.DiffMain(result, tc.expectedGraph, false)
+				diffs := dmp.DiffMain(tc.expectedGraph, result, false)
 
 				t.Fatalf(dmp.DiffPrettyText(diffs))
 			}

@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"strconv"
 	"testing"
 )
 
@@ -23,7 +22,6 @@ func (c *Context) String() string {
 	if c.linkedToLastLabel {
 		str += " linked to last label"
 	}
-	str += strconv.Itoa(c.indent)
 
 	return str
 }

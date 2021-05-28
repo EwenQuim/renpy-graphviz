@@ -34,7 +34,7 @@ func GetRenpyContent(rootPath string) []string {
 			if bom[0] != 0xef || bom[1] != 0xbb || bom[2] != 0xbf {
 				_, err = readFile.Seek(0, 0) // Not a BOM -- seek back to the beginning
 				if err != nil {
-					log.Fatal(err)
+					log.Fatal("error in file", file, err)
 				}
 			}
 

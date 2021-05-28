@@ -97,7 +97,6 @@ func (context *Context) update(line string, detect customRegexes) {
 
 		// BREAK -before COMMENTS cause this can be a tag-only line
 		case context.tags.breakFlow || detect.returns.MatchString(line):
-			context.lastLabel = ""
 			context.linkedToLastLabel = false
 
 		// FAKES -before COMMENTS cause this can be a tag-only line
@@ -138,6 +137,7 @@ func (context *Context) update(line string, detect customRegexes) {
 
 		// COMMENTS
 		case detect.comment.MatchString(line):
+			// do nothing but save some regex evaluations
 
 		// CALL
 		case detect.call.MatchString(line):
