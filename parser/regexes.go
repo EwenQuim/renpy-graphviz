@@ -6,29 +6,39 @@ import (
 )
 
 type customRegexes struct {
-	label   *regexp.Regexp
-	jump    *regexp.Regexp
-	call    *regexp.Regexp
-	comment *regexp.Regexp // line with only blank spaces and comments -will be ignored
-	returns *regexp.Regexp
-	menu    *regexp.Regexp
-	spaces  *regexp.Regexp
-	choice  *regexp.Regexp
-	tags    *regexp.Regexp
+	screen            *regexp.Regexp
+	useScreenInScreen *regexp.Regexp
+	screenToScreen    *regexp.Regexp
+	screenToLabel     *regexp.Regexp
+	labelToScreen     *regexp.Regexp
+	label             *regexp.Regexp
+	jump              *regexp.Regexp
+	call              *regexp.Regexp
+	comment           *regexp.Regexp // line with only blank spaces and comments -will be ignored
+	returns           *regexp.Regexp
+	menu              *regexp.Regexp
+	spaces            *regexp.Regexp
+	choice            *regexp.Regexp
+	tags              *regexp.Regexp
 }
 
 // should be called rarely
 func initializeDetectors() customRegexes {
 	return customRegexes{
-		label:   regexp.MustCompile(`^\s*label ([a-zA-Z0-9._-]+)(?:\([a-zA-Z0-9_= \-"']*\))?\s*:\s*(?:#.*)?$`),
-		jump:    regexp.MustCompile(`^\s*jump ([a-zA-Z0-9_.]+)\s*(?:#.*)?$`),
-		call:    regexp.MustCompile(`^\s*call (([a-zA-Z0-9_-]+)(?:\([a-zA-Z0-9_= \-"']*\))?)\s*(?:#.*)?$`),
-		comment: regexp.MustCompile(`^\s*(#.*)?$`),
-		returns: regexp.MustCompile(`^\s{0,4}return\s*(?:#.*)?$`),
-		menu:    regexp.MustCompile(`^\s*menu.*:\s*(?:#.*)?$`),
-		spaces:  regexp.MustCompile(`^(\s*).*$`),
-		choice:  regexp.MustCompile(`^\s*(?:"(.*?[^\\])"|'(.*?[^\\])').*:\s*(?:#.*)?$`),
-		tags:    regexp.MustCompile(`(\w+)(?: *\( *(\w+)(?: *, *(\w+))? *\))?`), // https://regex101.com/r/1vvDF1/1
+		screen:            regexp.MustCompile(`^\s*(?:init\s+[-\w]*\s+)?screen\s+([a-zA-Z0-9._-]+)\(.*\)\s*:\s*(?:#.*)?$`),
+		useScreenInScreen: regexp.MustCompile(`^\s*use (\w*).*(?:#.*)?$`),
+		screenToScreen:    regexp.MustCompile(`^\s*action .*Show\("(.*?)".*\).*(?:#.*)?$`),
+		screenToLabel:     regexp.MustCompile(`^\s*action .*(?:Jump|Call)\("(.*?)".*\).*(?:#.*)?$`),
+		labelToScreen:     regexp.MustCompile(`^\s*call screen (\w*)\(.*(?:#.*)?$`),
+		label:             regexp.MustCompile(`^\s*label ([a-zA-Z0-9._-]+)(?:\([a-zA-Z0-9_= \-"']*\))?\s*:\s*(?:#.*)?$`),
+		jump:              regexp.MustCompile(`^\s*jump ([a-zA-Z0-9_.]+)\s*(?:#.*)?$`),
+		call:              regexp.MustCompile(`^\s*call (([a-zA-Z0-9_-]+)(?:\([a-zA-Z0-9_= \-"']*\))?)\s*(?:#.*)?$`),
+		comment:           regexp.MustCompile(`^\s*(#.*)?$`),
+		returns:           regexp.MustCompile(`^\s{0,4}return\s*(?:#.*)?$`),
+		menu:              regexp.MustCompile(`^\s*menu.*:\s*(?:#.*)?$`),
+		spaces:            regexp.MustCompile(`^(\s*).*$`),
+		choice:            regexp.MustCompile(`^\s*(?:"(.*?[^\\])"|'(.*?[^\\])').*:\s*(?:#.*)?$`),
+		tags:              regexp.MustCompile(`(\w+)(?: *\( *(\w+)(?: *, *(\w+))? *\))?`), // https://regex101.com/r/1vvDF1/1
 	}
 }
 

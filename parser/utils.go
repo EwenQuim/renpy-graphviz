@@ -12,8 +12,6 @@ func ConsiderAsUseful(fullPath string) bool {
 		return false
 	case strings.Contains(fullPath, "options.rpy"):
 		return false
-	case strings.Contains(fullPath, "screens.rpy"):
-		return false
 	case strings.Contains(fullPath, "gui.rpy"):
 		return false
 	default:

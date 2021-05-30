@@ -29,10 +29,11 @@ type RenpyGraph struct {
 
 // RenpyGraphOptions are options that can be set to make a more customizable graph
 type RenpyGraphOptions struct {
-	ShowEdgesLabels bool // Show Labels on Edges? Can be unreadable but there is more information
-	ShowAtoms       bool // Show lonely nodes ? Might be useful but useless most of the time - and it avoids writing IGNORE tag everywhere
-	Silent          bool // Display .dot graph in the stdout
-	OpenFile        bool // Open the image in the default image viewer or not ?
+	ShowEdgesLabels   bool // Show Labels on Edges? Can be unreadable but there is more information
+	ShowAtoms         bool // Show lonely nodes ? Might be useful but useless most of the time - and it avoids writing IGNORE tag everywhere
+	ShowNestedScreens bool // Show nested screens (`use` keyword)
+	Silent            bool // Display .dot graph in the stdout
+	OpenFile          bool // Open the image in the default image viewer or not ?
 }
 
 // NewGraph creates an empty graph
@@ -87,6 +88,9 @@ func insertSpaces(s string) string {
 
 // AddNode to the ren'py graph. If label already exists, only apply styles
 func (g *RenpyGraph) AddNode(tags Tag, label string) {
+	if tags.useScreenInScreen && !g.Options.ShowNestedScreens {
+		return
+	}
 	// fmt.Println("adding ", label, "to", g)
 
 	labelName := beautifyLabel(label, tags)
@@ -102,12 +106,17 @@ func (g *RenpyGraph) AddNode(tags Tag, label string) {
 		g.nodes[label].repr.Label(strings.ToUpper(labelName)).Attrs("color", "purple", "style", "bold", "shape", "rectangle", "fontsize", "16")
 	} else if tags.gameOver {
 		g.nodes[label].repr.Attrs("color", "red", "style", "bold", "shape", "septagon")
+	} else if tags.screen {
+		g.nodes[label].repr.Attrs("color", "blue", "style", "bold", "shape", "egg")
 	}
 
 }
 
 // AddEdge to the renpy graph
 func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
+	if tags.useScreenInScreen && !g.Options.ShowNestedScreens {
+		return
+	}
 
 	parentNode := g.nodes[label[0]]
 	childrenNode := g.nodes[label[1]]
@@ -121,6 +130,12 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 		edge.Attrs("style", "dotted")
 	} else if tags.callLink {
 		edge.Attrs("style", "dashed", "color", "red")
+	} else if tags.screenToLabel || tags.labelToScreen {
+		edge.Attrs("style", "dashed", "color", "blue")
+	} else if tags.useScreenInScreen {
+		edge.Attrs("style", "dotted", "color", "blue", "arrowhead", "diamond", "arrowtail", "inv")
+	} else if tags.screenToScreen {
+		edge.Attrs("color", "blue")
 	}
 	if g.Options.ShowEdgesLabels && len(label) >= 3 {
 		edge.Label(label[2])

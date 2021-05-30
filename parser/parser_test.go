@@ -35,45 +35,45 @@ func TestUpdate(t *testing.T) {
 		// Implicit jump
 		{2, "label first:",
 			Context{currentSituation: situationLabel, currentLabel: "zero"},
-			Context{currentSituation: situationLabel, currentLabel: "first", linkedToLastLabel: true, lastLabel: "zero", tags: Tag{lowLink: true}},
+			Context{currentSituation: situationLabel, currentLabel: "first", labelLinkedToLastLabel: true, lastLabel: "zero", tags: Tag{lowLink: true}},
 		},
 		// Context update as there is nothing
 		{3, "useless line",
-			Context{currentSituation: situationLabel, currentLabel: "first", linkedToLastLabel: true, lastLabel: "zero", tags: Tag{lowLink: true}},
-			Context{currentSituation: situationPending, lastLabel: "first", linkedToLastLabel: true},
+			Context{currentSituation: situationLabel, currentLabel: "first", labelLinkedToLastLabel: true, lastLabel: "zero", tags: Tag{lowLink: true}},
+			Context{currentSituation: situationPending, lastLabel: "first", labelLinkedToLastLabel: true},
 		},
 		// Context transfer as there is nothing
 		{4, "useless line again",
-			Context{currentSituation: situationPending, lastLabel: "first", linkedToLastLabel: true},
-			Context{currentSituation: situationPending, lastLabel: "first", linkedToLastLabel: true},
+			Context{currentSituation: situationPending, lastLabel: "first", labelLinkedToLastLabel: true},
+			Context{currentSituation: situationPending, lastLabel: "first", labelLinkedToLastLabel: true},
 		},
 		// Jumps
 		{5, "jump second # and now jump!",
-			Context{currentSituation: situationPending, lastLabel: "first", linkedToLastLabel: true},
+			Context{currentSituation: situationPending, lastLabel: "first", labelLinkedToLastLabel: true},
 			Context{currentSituation: situationJump, lastLabel: "first", currentLabel: "second"},
 		},
 		{6, "useless line again and again",
-			Context{currentSituation: situationPending, lastLabel: "first", linkedToLastLabel: true},
-			Context{currentSituation: situationPending, lastLabel: "first", linkedToLastLabel: true},
+			Context{currentSituation: situationPending, lastLabel: "first", labelLinkedToLastLabel: true},
+			Context{currentSituation: situationPending, lastLabel: "first", labelLinkedToLastLabel: true},
 		},
 		// Call after the jump
 		{7, "call third # and now call !",
-			Context{currentSituation: situationPending, lastLabel: "first", linkedToLastLabel: true},
-			Context{currentSituation: situationCall, lastLabel: "first", currentLabel: "third", linkedToLastLabel: true, tags: Tag{callLink: true}},
+			Context{currentSituation: situationPending, lastLabel: "first", labelLinkedToLastLabel: true},
+			Context{currentSituation: situationCall, lastLabel: "first", currentLabel: "third", labelLinkedToLastLabel: true, tags: Tag{callLink: true}},
 		},
 		// Call is now used as a previous label
 		{8, "useless line again and again",
-			Context{currentSituation: situationCall, lastLabel: "first", currentLabel: "third", linkedToLastLabel: true, tags: Tag{callLink: true}},
-			Context{currentSituation: situationPending, lastLabel: "third", linkedToLastLabel: true},
+			Context{currentSituation: situationCall, lastLabel: "first", currentLabel: "third", labelLinkedToLastLabel: true, tags: Tag{callLink: true}},
+			Context{currentSituation: situationPending, lastLabel: "third", labelLinkedToLastLabel: true},
 		},
 		// Implicit jump after call
 		{9, "label truc(variable=0) : #test parsing",
-			Context{currentSituation: situationPending, lastLabel: "third", linkedToLastLabel: true},
-			Context{currentSituation: situationLabel, currentLabel: "truc", lastLabel: "third", linkedToLastLabel: true, tags: Tag{lowLink: true}},
+			Context{currentSituation: situationPending, lastLabel: "third", labelLinkedToLastLabel: true},
+			Context{currentSituation: situationLabel, currentLabel: "truc", lastLabel: "third", labelLinkedToLastLabel: true, tags: Tag{lowLink: true}},
 		},
 		// Return statement acts like BREAK
 		{10, "return # breaks link",
-			Context{currentSituation: situationLabel, currentLabel: "truc", lastLabel: "third", linkedToLastLabel: true, tags: Tag{lowLink: true}},
+			Context{currentSituation: situationLabel, currentLabel: "truc", lastLabel: "third", labelLinkedToLastLabel: true, tags: Tag{lowLink: true}},
 			Context{lastLabel: "truc"},
 		},
 		// ------- Independent testing -------
@@ -88,16 +88,16 @@ func TestUpdate(t *testing.T) {
 		},
 		{2, "call scene # towards temporary label",
 			Context{},
-			Context{currentSituation: situationCall, currentLabel: "scene", linkedToLastLabel: true, tags: Tag{callLink: true}},
+			Context{currentSituation: situationCall, currentLabel: "scene", labelLinkedToLastLabel: true, tags: Tag{callLink: true}},
 		},
 		// Handling call with/out tags and args
 		{2, "call scene(4) # towards temporary label",
 			Context{},
-			Context{currentSituation: situationCall, currentLabel: "scene(4)", linkedToLastLabel: true, tags: Tag{callLink: true}},
+			Context{currentSituation: situationCall, currentLabel: "scene(4)", labelLinkedToLastLabel: true, tags: Tag{callLink: true}},
 		},
 		{2, "call scene(4) # renpy-graphviz: GAMEOVER",
 			Context{lastLabel: "maybe_end"},
-			Context{currentSituation: situationCall, lastLabel: "maybe_end", currentLabel: "scene(4)", linkedToLastLabel: true, tags: Tag{callLink: true, gameOver: true}},
+			Context{currentSituation: situationCall, lastLabel: "maybe_end", currentLabel: "scene(4)", labelLinkedToLastLabel: true, tags: Tag{callLink: true, gameOver: true}},
 		},
 	}
 	for _, tc := range testCases {
@@ -127,23 +127,23 @@ func TestInit(t *testing.T) {
 		},
 		// Just after a label
 		{1, Context{currentSituation: situationLabel, currentLabel: "yo"},
-			Context{linkedToLastLabel: true, lastLabel: "yo"},
+			Context{labelLinkedToLastLabel: true, lastLabel: "yo"},
 		},
 		// Same
 		{2, Context{currentSituation: situationLabel, currentLabel: "second", lastLabel: "first"},
-			Context{linkedToLastLabel: true, lastLabel: "second"},
+			Context{labelLinkedToLastLabel: true, lastLabel: "second"},
 		},
 		// Call situation similar to labelSituation
 		{3, Context{currentSituation: situationCall, currentLabel: "second", lastLabel: "first"},
-			Context{linkedToLastLabel: true, lastLabel: "second"},
+			Context{labelLinkedToLastLabel: true, lastLabel: "second"},
 		},
 		// Call situation where we go to an ending
 		{4, Context{currentSituation: situationCall, currentLabel: "ending", lastLabel: "first", tags: Tag{gameOver: true}},
-			Context{linkedToLastLabel: false, lastLabel: "first"},
+			Context{labelLinkedToLastLabel: false, lastLabel: "first"},
 		},
 		// Jump situation where we go to an ending
 		{5, Context{currentSituation: situationJump, currentLabel: "ending", lastLabel: "first", tags: Tag{gameOver: true}},
-			Context{linkedToLastLabel: false, lastLabel: "first"},
+			Context{labelLinkedToLastLabel: false, lastLabel: "first"},
 		},
 	}
 	for _, tc := range testCases {

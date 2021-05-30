@@ -1,19 +1,21 @@
 package parser
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // Context gives information about the state of the current line of the script
 type Context struct {
-	currentSituation  situation // current line situation : jump or label ?
-	currentLabel      string    // current line label. Empty if keyword is `situationPending`
-	linkedToLastLabel bool      // follows a label or not ?
-	lastLabel         string    // last label encountered. Empty if not linkedToLastLabel
-	indent            int       // 4 spaces = 1 indent
-	menuIndent        int       // negative = not inside a menu
-	lastChoice        string    // last choice in a menu
-	tags              Tag       // see the Tag struct
-	tagLabel          string    // fake label written in a comment
-	tagJump           string    // fake jump destination written in a comment
+	currentSituation       situation // current line situation
+	currentLabel           string    // current line "location" (label/call/jump/screen information). Empty if keyword is `situationPending`
+	labelLinkedToLastLabel bool      // label follows a label or not ?
+	lastLabel              string    // last label encountered. Empty if not labelLinkedToLastLabel
+	indent                 int       // 4 spaces = 1 indent
+	menuIndent             int       // negative = not inside a menu
+	lastChoice             string    // last choice in a menu
+	tags                   Tag       // see the Tag struct
+	tagLabel               string    // fake label written in a comment
+	tagJump                string    // fake jump destination written in a comment
 	// currentFile       string
 }
 
@@ -38,7 +40,7 @@ func Graph(text []string, options RenpyGraphOptions) RenpyGraph {
 		case situationLabel:
 			analytics.labels++
 			g.AddNode(context.tags, context.currentLabel)
-			if context.linkedToLastLabel {
+			if context.labelLinkedToLastLabel && !context.tags.screen {
 				g.AddEdge(context.tags, context.lastLabel, context.currentLabel, context.lastChoice)
 			}
 
@@ -63,6 +65,10 @@ func Graph(text []string, options RenpyGraphOptions) RenpyGraph {
 			g.AddNode(context.tags, context.tagLabel)
 			g.AddNode(context.tags, context.tagJump)
 			g.AddEdge(context.tags, context.tagLabel, context.tagJump, context.lastChoice)
+
+		case situationScreen:
+			analytics.screens++
+			g.AddNode(context.tags, context.currentLabel)
 		}
 
 	}
@@ -78,7 +84,7 @@ func Graph(text []string, options RenpyGraphOptions) RenpyGraph {
 
 // updates the context according to a line of text and detectors
 func (context *Context) update(line string, detect customRegexes) {
-
+	fmt.Println(line)
 	context.init()
 
 	context.handleTags(line, detect)
@@ -97,7 +103,7 @@ func (context *Context) update(line string, detect customRegexes) {
 
 		// BREAK -before COMMENTS cause this can be a tag-only line
 		case context.tags.breakFlow || detect.returns.MatchString(line):
-			context.linkedToLastLabel = false
+			context.labelLinkedToLastLabel = false
 
 		// FAKES -before COMMENTS cause this can be a tag-only line
 		case context.tags.fakeLabel:
@@ -116,28 +122,50 @@ func (context *Context) update(line string, detect customRegexes) {
 
 			context.currentLabel = labelName
 			context.currentSituation = situationLabel
-			if context.linkedToLastLabel {
+			if context.labelLinkedToLastLabel {
 				context.tags.lowLink = true
 			}
 
 		// JUMP -before COMMENTS cause this can be a tag-only line
-		case detect.jump.MatchString(line) || context.tags.inGameJump:
+		case detect.jump.MatchString(line) || context.tags.inGameJump || detect.screenToLabel.MatchString(line) || detect.labelToScreen.MatchString(line) || detect.screenToScreen.MatchString(line) || detect.useScreenInScreen.MatchString(line):
 			var labelName string
 			if context.tags.inGameJump {
 				labelName = context.tagJump
-			} else {
+			} else if detect.jump.MatchString(line) {
 				labelName = detect.jump.FindStringSubmatch(line)[1]
+			} else if detect.screenToLabel.MatchString(line) {
+				context.tags.screenToLabel = true
+				labelName = detect.screenToLabel.FindStringSubmatch(line)[1]
+			} else if detect.labelToScreen.MatchString(line) {
+				context.tags.labelToScreen = true
+				labelName = detect.labelToScreen.FindStringSubmatch(line)[1]
+			} else if detect.useScreenInScreen.MatchString(line) {
+				context.tags.useScreenInScreen = true
+				labelName = detect.useScreenInScreen.FindStringSubmatch(line)[1]
+			} else {
+				context.tags.screenToScreen = true
+				labelName = detect.screenToScreen.FindStringSubmatch(line)[1]
 			}
 			if context.tags.skipLink {
 				labelName = labelName + randSeq(5)
 			}
 			context.currentLabel = labelName
 			context.currentSituation = situationJump
-			context.linkedToLastLabel = false
+			context.labelLinkedToLastLabel = false
 
 		// COMMENTS
 		case detect.comment.MatchString(line):
 			// do nothing but save some regex evaluations
+
+		// SCREEN
+		case detect.screen.MatchString(line):
+			context.tags.screen = true
+			labelName := detect.screen.FindStringSubmatch(line)[1]
+			context.currentLabel = labelName
+			context.currentSituation = situationLabel
+			if context.labelLinkedToLastLabel && !detect.screen.MatchString(line) {
+				context.tags.lowLink = true
+			}
 
 		// CALL
 		case detect.call.MatchString(line):
@@ -147,7 +175,7 @@ func (context *Context) update(line string, detect customRegexes) {
 			}
 			context.currentLabel = labelName
 			context.currentSituation = situationCall
-			context.linkedToLastLabel = true
+			context.labelLinkedToLastLabel = true
 			context.tags.callLink = true
 
 		// MENU
@@ -161,7 +189,7 @@ func (context *Context) update(line string, detect customRegexes) {
 		// USUAL VN
 		case context.lastLabel != "":
 			// a label is available (from before in the file) and we are after a jump that is not followed by comments or a label
-			context.linkedToLastLabel = true
+			context.labelLinkedToLastLabel = true
 
 		default:
 		}
@@ -171,7 +199,7 @@ func (context *Context) update(line string, detect customRegexes) {
 // initialises the context object before reading a new line, with the context of the previous line
 func (context *Context) init() {
 
-	// If last line was a label, say it was the last label
+	// If last line was a label (not a screen), say it was the last label
 	// Current value have no meaning now
 	// Refer to `.situation`
 	if context.currentSituation == situationLabel || context.currentSituation == situationCall {
@@ -180,7 +208,7 @@ func (context *Context) init() {
 		// Else, update the corresponding label
 		if !context.tags.gameOver {
 			context.lastLabel = context.currentLabel
-			context.linkedToLastLabel = true
+			context.labelLinkedToLastLabel = true
 		}
 	}
 

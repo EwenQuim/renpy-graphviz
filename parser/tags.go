@@ -19,17 +19,22 @@ const (
 
 // A Tag allows more control on the graph structure
 type Tag struct {
-	ignore      bool // renpy-graphviz: IGNORE tag
-	title       bool // renpy-graphviz: TITLE tag
-	breakFlow   bool // renpy-graphviz: BREAK tag
-	lowLink     bool // style for implicit jumps
-	callLink    bool // style for call statement
-	gameOver    bool // renpy-graphviz: GAMEOVER tag
-	skipLink    bool // renpy-graphviz: SKIPLINK tag
-	inGameLabel bool // renpy-graphviz: INGAME_LABEL(label_name) tag
-	fakeLabel   bool // renpy-graphviz: FAKE_LABEL(label_name) tag
-	inGameJump  bool // renpy-graphviz: INGAME_JUMP(to_label) tag
-	fakeJump    bool // renpy-graphviz: FAKE_JUMP(from_label, to_label) tag
+	ignore            bool // renpy-graphviz: IGNORE tag
+	title             bool // renpy-graphviz: TITLE tag
+	breakFlow         bool // renpy-graphviz: BREAK tag
+	lowLink           bool // style for implicit jumps
+	callLink          bool // style for call statement
+	gameOver          bool // renpy-graphviz: GAMEOVER tag
+	skipLink          bool // renpy-graphviz: SKIPLINK tag
+	inGameLabel       bool // renpy-graphviz: INGAME_LABEL(label_name) tag
+	fakeLabel         bool // renpy-graphviz: FAKE_LABEL(label_name) tag
+	inGameJump        bool // renpy-graphviz: INGAME_JUMP(to_label) tag
+	fakeJump          bool // renpy-graphviz: FAKE_JUMP(from_label, to_label) tag
+	screenToLabel     bool // jump from a screen to a label
+	labelToScreen     bool // jump from a label to a screen
+	screenToScreen    bool // jump from a screen to another
+	useScreenInScreen bool // usage of a screen inside another
+	screen            bool // this node is a screen
 }
 
 // handleTags detects tags in the given line. See Tag struct

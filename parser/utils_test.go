@@ -19,7 +19,7 @@ func (c *Context) String() string {
 	if c.lastLabel != "" {
 		str += fmt.Sprint(" lastLabel:", c.lastLabel)
 	}
-	if c.linkedToLastLabel {
+	if c.labelLinkedToLastLabel {
 		str += " linked to last label"
 	}
 
