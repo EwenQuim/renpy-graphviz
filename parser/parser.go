@@ -56,7 +56,7 @@ func Graph(text []string, options RenpyGraphOptions) RenpyGraph {
 		oldContext := context
 		context.update(line, detectors)
 
-		g.LogLineContext(line, context, oldContext)
+		g.logLineContext(line, context, oldContext)
 
 		switch context.currentSituation {
 

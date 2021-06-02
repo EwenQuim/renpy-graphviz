@@ -58,7 +58,8 @@ func (c *Context) String() string {
 	return str
 }
 
-func (c *Context) Diff(d Context) bool {
+// diff is used mainly by the logger
+func (c *Context) diff(d Context) bool {
 	return c.detectImplicitJump != d.detectImplicitJump ||
 		!reflect.DeepEqual(c.labelStack, d.labelStack) ||
 		c.currentSituation != d.currentSituation ||
@@ -70,20 +71,20 @@ func (c *Context) Diff(d Context) bool {
 		c.menuIndent != d.menuIndent
 }
 
-func (context *Context) cleanContextAccordingToIndent(line string) {
+func (c *Context) cleanContextAccordingToIndent(line string) {
 	// After a menu (indentation before menu indentation) CANNOT NOT STACK for the moment
-	if -1 < context.indent && context.indent <= context.menuIndent {
-		context.menuIndent = 0
-		context.lastChoice = ""
+	if -1 < c.indent && c.indent <= c.menuIndent {
+		c.menuIndent = 0
+		c.lastChoice = ""
 	}
 
 	if len(strings.TrimLeft(line, " ")) >= 4 && strings.TrimLeft(line, " ")[:4] != "menu" { // exception...
 		// Updates label stack
-		if context.indent >= 0 {
-			for i, record := range context.labelStack {
-				if context.indent <= record.indent {
-					context.lastLabel = context.labelStack[i].labelName
-					context.labelStack = context.labelStack[:i]
+		if c.indent >= 0 {
+			for i, record := range c.labelStack {
+				if c.indent <= record.indent {
+					c.lastLabel = c.labelStack[i].labelName
+					c.labelStack = c.labelStack[:i]
 					break
 				}
 			}
@@ -91,7 +92,7 @@ func (context *Context) cleanContextAccordingToIndent(line string) {
 	}
 
 	// Updates screen situation
-	if context.indent == 0 {
-		context.currentScreen = ""
+	if c.indent == 0 {
+		c.currentScreen = ""
 	}
 }
