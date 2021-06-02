@@ -1,30 +1,10 @@
 package parser
 
 import (
-	"fmt"
 	"testing"
 )
 
 // real tests for utils functions
-
-// utils for test functions
-func (c *Context) String() string {
-	str := ""
-	if c.currentSituation != "" {
-		str += fmt.Sprint(" situation:", c.currentSituation)
-	}
-	if c.currentLabel != "" {
-		str += fmt.Sprint(" label:", c.currentLabel)
-	}
-	if c.lastLabel != "" {
-		str += fmt.Sprint(" lastLabel:", c.lastLabel)
-	}
-	if c.labelLinkedToLastLabel {
-		str += " linked to last label"
-	}
-
-	return str
-}
 
 func (g RenpyGraph) testGraphEquality(f RenpyGraph, t *testing.T) {
 	for nodeName, node := range g.nodes {
@@ -46,5 +26,69 @@ func (g RenpyGraph) testGraphEquality(f RenpyGraph, t *testing.T) {
 		if !ok {
 			t.Errorf("Node '%v' was expected to be generated but wasn't", nodeName)
 		}
+	}
+}
+
+func TestCleanContextAccordingToIndent(t *testing.T) {
+	// Removes last
+	c := Context{}
+	c.indent = 5
+	c.labelStack = []labelStack{
+		{0, "first"},
+		{2, "second"},
+		{6, "third"},
+	}
+	c.cleanContextAccordingToIndent("nothing")
+
+	if len(c.labelStack) != 2 {
+		t.Errorf("labelStack length: expected %v, got %v", 2, c.labelStack)
+	}
+	if c.labelStack[len(c.labelStack)-1].labelName != "second" {
+		t.Error("labelStack element unexpected", c.labelStack)
+	}
+	if c.lastLabel != "third" {
+		t.Error("lastLabel unexpected", c.labelStack)
+	}
+
+	// Removes 2 last
+	c.indent = 2
+	c.labelStack = []labelStack{
+		{0, "first"},
+		{2, "second"},
+		{6, "third"},
+	}
+	c.cleanContextAccordingToIndent("nothing")
+
+	if len(c.labelStack) != 1 {
+		t.Errorf("labelStack length: expected %v, got %v", 1, c.labelStack)
+	}
+	if c.labelStack[len(c.labelStack)-1].labelName != "first" {
+		t.Error("labelStack element unexpected", c.labelStack)
+	}
+	if c.lastLabel != "second" {
+		t.Error("lastLabel unexpected", c.labelStack)
+	}
+
+	// Removes everything
+	c.indent = 0
+	c.labelStack = []labelStack{
+		{0, "first"},
+		{2, "second"},
+		{6, "third"},
+	}
+	c.cleanContextAccordingToIndent("nothing")
+	if len(c.labelStack) != 0 {
+		t.Errorf("labelStack length: expected %v, got %v", 0, c.labelStack)
+	}
+	if c.lastLabel != "first" {
+		t.Error("lastLabel unexpected", c.labelStack)
+	}
+
+	// Screen state cleaning
+	c.indent = 0
+	c.currentScreen = "this_is_a_screen"
+	c.cleanContextAccordingToIndent("nothing")
+	if c.currentScreen != "" {
+		t.Errorf("labelStack screen not cleaned")
 	}
 }

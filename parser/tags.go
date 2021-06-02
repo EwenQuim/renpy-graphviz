@@ -23,6 +23,7 @@ type Tag struct {
 	title             bool // renpy-graphviz: TITLE tag
 	breakFlow         bool // renpy-graphviz: BREAK tag
 	lowLink           bool // style for implicit jumps
+	nestedLabel       bool // style for nested labels
 	callLink          bool // style for call statement
 	gameOver          bool // renpy-graphviz: GAMEOVER tag
 	skipLink          bool // renpy-graphviz: SKIPLINK tag

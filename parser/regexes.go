@@ -25,14 +25,14 @@ type customRegexes struct {
 // should be called rarely
 func initializeDetectors() customRegexes {
 	return customRegexes{
-		screen:            regexp.MustCompile(`^\s*(?:init\s+[-\w]*\s+)?screen\s+([a-zA-Z0-9._-]+)\(.*\)\s*:\s*(?:#.*)?$`),
-		useScreenInScreen: regexp.MustCompile(`^\s*use (\w*).*(?:#.*)?$`),
-		screenToScreen:    regexp.MustCompile(`^\s*action .*Show\("(.*?)".*\).*(?:#.*)?$`),
-		screenToLabel:     regexp.MustCompile(`^\s*action .*(?:Jump|Call)\("(.*?)".*\).*(?:#.*)?$`),
-		labelToScreen:     regexp.MustCompile(`^\s*call screen (\w*)\(.*(?:#.*)?$`),
-		label:             regexp.MustCompile(`^\s*label ([a-zA-Z0-9._-]+)(?:\([a-zA-Z0-9_= \-"']*\))?\s*:\s*(?:#.*)?$`),
-		jump:              regexp.MustCompile(`^\s*jump ([a-zA-Z0-9_.]+)\s*(?:#.*)?$`),
-		call:              regexp.MustCompile(`^\s*call (([a-zA-Z0-9_-]+)(?:\([a-zA-Z0-9_= \-"']*\))?)\s*(?:#.*)?$`),
+		screen:            regexp.MustCompile(`^\s*(?:init\s+[-\w]*\s+)?screen\s+([a-zA-Z0-9._-]+).*\s*:\s*(?:#.*)?$`),
+		useScreenInScreen: regexp.MustCompile(`^\s*use\s+(\w*).*(?:#.*)?$`),
+		screenToScreen:    regexp.MustCompile(`^\s*action\s+.*Show\("(.*?)".*\).*(?:#.*)?$`),
+		screenToLabel:     regexp.MustCompile(`^\s*action\s+.*(?:Jump|Call)\("(.*?)".*\).*(?:#.*)?$`),
+		labelToScreen:     regexp.MustCompile(`^\s*call\s+screen (\w*).*(?:#.*)?$`),
+		label:             regexp.MustCompile(`^\s*label\s+([a-zA-Z0-9._-]+)(?:\([a-zA-Z0-9,_= \-"']*\))?\s*:\s*(?:#.*)?$`),
+		jump:              regexp.MustCompile(`^\s*jump\s+([a-zA-Z0-9_.]+)\s*(?:#.*)?$`),
+		call:              regexp.MustCompile(`^\s*call\s+(([a-zA-Z0-9_-]+)(?:\([a-zA-Z0-9,_= \-"']*\))?)\s*(?:#.*)?$`),
 		comment:           regexp.MustCompile(`^\s*(#.*)?$`),
 		returns:           regexp.MustCompile(`^\s{0,4}return\s*(?:#.*)?$`),
 		menu:              regexp.MustCompile(`^\s*menu.*:\s*(?:#.*)?$`),

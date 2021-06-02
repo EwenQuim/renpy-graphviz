@@ -25,6 +25,7 @@ _Routes of the Question, the classic Ren'Py example_
     - [FAKE_LABEL(a) & FAKE_JUMP(a, b)](#fake_labela--fake_jumpa-b)
     - [INGAME_LABEL(a) & INGAME_JUMP(b)](#ingame_labela--ingame_jumpb)
   - [Limitations](#limitations)
+  - [CONTRIBUTING](#contributing)
   - [LICENSE](#license)
 
 ## Examples
@@ -333,6 +334,10 @@ label option_one:
 This require your VN to be structured in a certain way, so it's possible that it isn't perfect for you. Feel free to raise an issue [here](https://github.com/EwenQuim/renpy-graphviz/issues), or to change your VN structure, by adding tags manually.
 
 It does not handle screens for the moments, but **your contribution to the project** are appreciated!
+
+## CONTRIBUTING
+
+See the [CONTRIBUTING.md](./CONTRIBUTING.md) file
 
 ## LICENSE
 

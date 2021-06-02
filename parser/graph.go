@@ -2,6 +2,7 @@ package parser
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"regexp"
@@ -17,6 +18,7 @@ type Node struct {
 	neighbors []string
 	repr      *dot.Node
 	notAlone  bool
+	screen    bool // is this node a screen ?
 }
 
 // RenpyGraph is the graph of Ren'Py story structure
@@ -31,9 +33,11 @@ type RenpyGraph struct {
 type RenpyGraphOptions struct {
 	ShowEdgesLabels   bool // Show Labels on Edges? Can be unreadable but there is more information
 	ShowAtoms         bool // Show lonely nodes ? Might be useful but useless most of the time - and it avoids writing IGNORE tag everywhere
+	ShowScreens       bool // Show screens ?
 	ShowNestedScreens bool // Show nested screens (`use` keyword)
 	Silent            bool // Display .dot graph in the stdout
 	OpenFile          bool // Open the image in the default image viewer or not ?
+	FullDebug         bool // Show all lines and updates
 }
 
 // NewGraph creates an empty graph
@@ -91,7 +95,6 @@ func (g *RenpyGraph) AddNode(tags Tag, label string) {
 	if tags.useScreenInScreen && !g.Options.ShowNestedScreens {
 		return
 	}
-	// fmt.Println("adding ", label, "to", g)
 
 	labelName := beautifyLabel(label, tags)
 
@@ -102,24 +105,37 @@ func (g *RenpyGraph) AddNode(tags Tag, label string) {
 
 		g.nodes[label] = &Node{name: label, neighbors: make([]string, 0), repr: &nodeGraph}
 	}
+	if tags.useScreenInScreen || tags.labelToScreen || tags.screenToScreen || tags.screen {
+		g.nodes[label].screen = true
+	}
 	if tags.title {
 		g.nodes[label].repr.Label(strings.ToUpper(labelName)).Attrs("color", "purple", "style", "bold", "shape", "rectangle", "fontsize", "16")
 	} else if tags.gameOver {
 		g.nodes[label].repr.Attrs("color", "red", "style", "bold", "shape", "septagon")
-	} else if tags.screen {
+	} else if g.nodes[label].screen {
 		g.nodes[label].repr.Attrs("color", "blue", "style", "bold", "shape", "egg")
 	}
 
 }
 
 // AddEdge to the renpy graph
-func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
+func (g *RenpyGraph) AddEdge(tags Tag, label ...string) error {
 	if tags.useScreenInScreen && !g.Options.ShowNestedScreens {
-		return
+		return nil
 	}
 
-	parentNode := g.nodes[label[0]]
-	childrenNode := g.nodes[label[1]]
+	if len(label) < 2 {
+		return fmt.Errorf(`ERROR: AddEdge received "%v"`, label)
+	}
+
+	parentNode, exists := g.nodes[label[0]]
+	if !exists {
+		return fmt.Errorf(`ERROR: Looking for the non-existent parent label "%v"`, label[0])
+	}
+	childrenNode, exists := g.nodes[label[1]]
+	if !exists {
+		return fmt.Errorf(`ERROR: Looking for the non-existent children label "%v"`, label[1])
+	}
 
 	g.nodes[label[0]].notAlone = true
 	g.nodes[label[1]].notAlone = true
@@ -130,6 +146,8 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 		edge.Attrs("style", "dotted")
 	} else if tags.callLink {
 		edge.Attrs("style", "dashed", "color", "red")
+	} else if tags.nestedLabel {
+		edge.Attrs("style", "dotted", "arrowhead", "diamond")
 	} else if tags.screenToLabel || tags.labelToScreen {
 		edge.Attrs("style", "dashed", "color", "blue")
 	} else if tags.useScreenInScreen {
@@ -142,7 +160,7 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) {
 	}
 
 	parentNode.neighbors = append(parentNode.neighbors, label[1])
-
+	return nil
 }
 
 // CreateFile creates a file with the graph description in dot language
@@ -158,6 +176,7 @@ func (g *RenpyGraph) CreateFile(fileName string) error {
 // It removes Atoms if specified in .Options field
 func (g *RenpyGraph) String() string {
 	g.removeAtomsIfSpecified()
+	g.removeScreensIfSpecified()
 	return g.graph.String()
 }
 
@@ -165,6 +184,16 @@ func (g *RenpyGraph) removeAtomsIfSpecified() {
 	if !g.Options.ShowAtoms {
 		for name, node := range g.nodes {
 			if !node.notAlone {
+				g.graph.DeleteNode(name)
+			}
+		}
+	}
+}
+
+func (g *RenpyGraph) removeScreensIfSpecified() {
+	if !g.Options.ShowScreens {
+		for name, node := range g.nodes {
+			if node.screen {
 				g.graph.DeleteNode(name)
 			}
 		}

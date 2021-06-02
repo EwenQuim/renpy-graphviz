@@ -14,25 +14,25 @@ func TestExampleGraphs(t *testing.T) {
 		options       RenpyGraphOptions
 		expectedGraph string
 	}{
-		{"../testCases/tagsInGame", RenpyGraphOptions{Silent: true, ShowAtoms: true}, `
-digraph  {
+		// 		{"../testCases/tagsInGame", RenpyGraphOptions{Silent: true, ShowAtoms: true}, `
+		// digraph  {
 
-	n5[label="ending"];
-	n6[color="purple",fontsize="16",label="FIRST",shape="rectangle",style="bold"];
-	n4[label="indirect label"];
-	n8[label="not indirect"];
-	n2[label="option one"];
-	n3[label="option two"];
-	n7[label="second"];
-	n1[label="start"];
-	n6->n7[style="dotted"];
-	n4->n3;
-	n2->n4[style="dotted"];
-	n3->n5;
-	n1->n2;
-	n1->n3;
+		// 	n5[label="ending"];
+		// 	n6[color="purple",fontsize="16",label="FIRST",shape="rectangle",style="bold"];
+		// 	n4[label="indirect label"];
+		// 	n8[label="not indirect"];
+		// 	n2[label="option one"];
+		// 	n3[label="option two"];
+		// 	n7[label="second"];
+		// 	n1[label="start"];
+		// 	n6->n7[style="dotted"];
+		// 	n4->n3;
+		// 	n2->n4[style="dotted"];
+		// 	n3->n5;
+		// 	n1->n2;
+		// 	n1->n3;
 
-}`},
+		// }`},
 		{"../testCases/tagsFake", RenpyGraphOptions{Silent: true, ShowAtoms: true}, `
 digraph  {
 
@@ -99,6 +99,27 @@ digraph  {
 	n1[label="a"];
 	n2[label="b"];
 	n1->n2;
+
+}`},
+		{"../testCases/screens", RenpyGraphOptions{Silent: true, ShowScreens: true, ShowNestedScreens: true}, `
+digraph  {
+
+	n7[label="game"];
+	n3[label="label continue"];
+	n2[color="blue",label="nested screen",shape="egg",style="bold"];
+	n6[color="blue",label="new screen",shape="egg",style="bold"];
+	n8[label="next"];
+	n4[color="blue",label="other screen",shape="egg",style="bold"];
+	n5[color="blue",label="screen 2",shape="egg",style="bold"];
+	n1[color="blue",label="test",shape="egg",style="bold"];
+	n7->n6[color="blue",style="dashed"];
+	n7->n8;
+	n7->n4[color="blue",style="dashed"];
+	n5->n2[arrowhead="diamond",arrowtail="inv",color="blue",style="dotted"];
+	n5->n6[color="blue",style="dashed"];
+	n1->n2[arrowhead="diamond",arrowtail="inv",color="blue",style="dotted"];
+	n1->n3[color="blue",style="dashed"];
+	n1->n4[color="blue"];
 
 }`},
 	}

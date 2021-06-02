@@ -1,0 +1,20 @@
+digraph  {
+	
+	n7[label="game"];
+	n3[label="label continue"];
+	n2[color="blue",label="nested screen",shape="egg",style="bold"];
+	n6[color="blue",label="new screen",shape="egg",style="bold"];
+	n8[label="next"];
+	n4[color="blue",label="other screen",shape="egg",style="bold"];
+	n5[color="blue",label="screen 2",shape="egg",style="bold"];
+	n1[color="blue",label="test",shape="egg",style="bold"];
+	n7->n6[color="blue",label="",style="dashed"];
+	n7->n8[label=""];
+	n7->n4[color="blue",label="",style="dashed"];
+	n5->n2[arrowhead="diamond",arrowtail="inv",color="blue",style="dotted"];
+	n5->n6[color="blue",style="dashed"];
+	n1->n2[arrowhead="diamond",arrowtail="inv",color="blue",style="dotted"];
+	n1->n3[color="blue",style="dashed"];
+	n1->n4[color="blue"];
+	
+}

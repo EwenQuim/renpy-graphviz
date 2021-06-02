@@ -5,3 +5,4 @@
 .DS_store
 *.out
 vendor/
+*.config

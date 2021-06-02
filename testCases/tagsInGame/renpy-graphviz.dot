@@ -10,9 +10,13 @@ digraph  {
 	n1[label="start"];
 	n6->n7[label="",style="dotted"];
 	n4->n3[label=""];
+	n4->n3[label=""];
 	n2->n4[label="",style="dotted"];
 	n3->n5[label=""];
+	n3->n6[label=""];
+	n7->n8[label=""];
 	n1->n2[label=""];
 	n1->n3[label=""];
+	n1->n2[label=""];
 	
 }

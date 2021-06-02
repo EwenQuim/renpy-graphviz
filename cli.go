@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/fatih/color"
+	toml "github.com/pelletier/go-toml"
 	"pkg.amethysts.studio/renpy-graphviz/parser"
 )
 
@@ -27,13 +28,33 @@ func PlugCLI() (string, parser.RenpyGraphOptions) {
 	var showAtoms bool
 	var silent bool
 	var openFile bool
-	var showNestedScreens bool
+	var hideScreens bool
+	var hideNestedScreens bool
+	var fullDebug bool
 
-	flag.BoolVar(&showAtoms, "atoms", false, "Show atoms (lonely nodes)")
-	flag.BoolVar(&hideEdgesLabels, "hide-edges", false, "Hide choice labels on edges")
-	flag.BoolVar(&silent, "silent", false, "Display nothing to the stdout")
-	flag.BoolVar(&openFile, "open", false, "Open file in default image viewer")
-	flag.BoolVar(&showNestedScreens, "show-nested", false, "Show nested screens")
+	// TOML
+	getDefaultConfig()
+	config, err := toml.LoadFile("renpy-graphviz.config")
+	if err != nil {
+		fmt.Println("Error ", err.Error())
+	} else {
+		showAtoms = config.Get("config.atoms").(bool)
+		hideEdgesLabels = !config.Get("config.edges").(bool)
+		openFile = config.Get("config.open").(bool)
+		hideScreens = !config.Get("config.screens").(bool)
+		hideNestedScreens = !config.Get("config.nested-screens").(bool)
+		silent = config.Get("config.silent").(bool)
+		fullDebug = config.Get("config.debug").(bool)
+	}
+
+	// CLI overrides TOML
+	flag.BoolVar(&showAtoms, "atoms", showAtoms, "Show atoms (lonely nodes)")
+	flag.BoolVar(&hideEdgesLabels, "hide-edges", hideEdgesLabels, "Hide choice labels on edges")
+	flag.BoolVar(&silent, "silent", silent, "Display nothing to the stdout")
+	flag.BoolVar(&openFile, "open", openFile, "Open file in default image viewer")
+	flag.BoolVar(&hideScreens, "hide-screens", hideScreens, "Hide screens")
+	flag.BoolVar(&hideNestedScreens, "hide-nested", hideNestedScreens, "Hide nested screens")
+	flag.BoolVar(&fullDebug, "debug", fullDebug, "Debug")
 
 	flag.Parse()
 
@@ -41,6 +62,12 @@ func PlugCLI() (string, parser.RenpyGraphOptions) {
 	if len(flag.Args()) > 0 {
 		path = flag.Args()[0]
 	}
-	return path, parser.RenpyGraphOptions{ShowEdgesLabels: !hideEdgesLabels, ShowAtoms: showAtoms, Silent: silent, OpenFile: openFile, ShowNestedScreens: showNestedScreens}
-
+	return path, parser.RenpyGraphOptions{
+		ShowEdgesLabels:   !hideEdgesLabels,
+		ShowAtoms:         showAtoms,
+		Silent:            silent,
+		OpenFile:          openFile,
+		ShowScreens:       !hideScreens,
+		ShowNestedScreens: !hideNestedScreens,
+		FullDebug:         fullDebug}
 }

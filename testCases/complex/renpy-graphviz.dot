@@ -6,12 +6,12 @@ digraph  {
 	n3[label="routeAlternative"];
 	n1[color="purple",fontsize="16",label="ROUTEONE",shape="rectangle",style="bold"];
 	n6[color="purple",fontsize="16",label="STAAA AA 6 RT",shape="rectangle",style="bold"];
-	n5->n2[style="dotted"];
-	n3->n4;
-	n1->n2;
-	n1->n3[style="dotted"];
-	n6->n1;
-	n6->n5;
-	n6->n3;
+	n5->n2[label="",style="dotted"];
+	n3->n4[label=""];
+	n1->n2[label=""];
+	n1->n3[label="",style="dotted"];
+	n6->n1[label="Ah! D'accord, si vous le dites..."];
+	n6->n5[label="Vous êtes sûr?"];
+	n6->n3[label="More"];
 	
 }
