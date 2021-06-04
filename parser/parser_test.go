@@ -9,7 +9,10 @@ import (
 func TestEmptyGraph(t *testing.T) {
 	t.Parallel()
 
-	graph := Graph([]string{"nothing"}, RenpyGraphOptions{Silent: true})
+	graph, err := Graph([]string{"nothing"}, RenpyGraphOptions{Silent: true})
+	if err != nil {
+		t.Fatal("failed empty graph creation")
+	}
 
 	expectedGraph := RenpyGraph{}
 

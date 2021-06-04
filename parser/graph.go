@@ -125,16 +125,15 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) error {
 	}
 
 	if len(label) < 2 {
-		return fmt.Errorf(`ERROR: AddEdge received "%v"`, label)
+		return fmt.Errorf(`ERROR: AddEdge received "%v". Expected at least 2 args`, label)
 	}
-
 	parentNode, exists := g.nodes[label[0]]
 	if !exists {
-		return fmt.Errorf(`ERROR: Looking for the non-existent parent label "%v"`, label[0])
+		return fmt.Errorf("expected %v %w", label[0], ErrorParentNotFound)
 	}
 	childrenNode, exists := g.nodes[label[1]]
 	if !exists {
-		return fmt.Errorf(`ERROR: Looking for the non-existent children label "%v"`, label[1])
+		return fmt.Errorf(`ERROR: Non-existent children label "%v" expected`, label[1])
 	}
 
 	g.nodes[label[0]].notAlone = true
@@ -155,7 +154,7 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) error {
 	} else if tags.screenToScreen {
 		edge.Attrs("color", "blue")
 	}
-	if g.Options.ShowEdgesLabels && len(label) >= 3 {
+	if g.Options.ShowEdgesLabels && len(label) >= 3 && label[2] != "" {
 		edge.Label(label[2])
 	}
 
