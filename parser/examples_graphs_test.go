@@ -130,10 +130,7 @@ digraph  {
 		t.Run(tc.pathToScript, func(t *testing.T) {
 
 			renpyLines := GetRenpyContent(tc.pathToScript)
-			graphResult, err := Graph(renpyLines, tc.options)
-			if err != nil {
-				t.Fatal("Error: %w", err)
-			}
+			graphResult := Graph(renpyLines, tc.options)
 			result := graphResult.String()
 
 			if r.Replace(result) != r.Replace(tc.expectedGraph) {

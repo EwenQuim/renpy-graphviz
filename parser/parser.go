@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"log"
 )
 
 // Context gives information about the state of the current line of the script
@@ -40,7 +41,7 @@ type labelStack struct {
 
 // Graph creates a RenpyGraph from lines of script.
 // That's the main function
-func Graph(text []string, options RenpyGraphOptions) (RenpyGraph, error) {
+func Graph(text []string, options RenpyGraphOptions) RenpyGraph {
 
 	g := NewGraph(options)
 
@@ -75,7 +76,7 @@ func Graph(text []string, options RenpyGraphOptions) (RenpyGraph, error) {
 
 			if description != "" {
 				if err := g.AddEdge(context.tags, fromLabel, context.currentLabel, context.lastChoice); err != nil {
-					return g, fmt.Errorf("%v\nERROR(unexpected %v jump) context: %v \n%w", line, description, context.String(), err)
+					fmt.Printf("---\n%v\nERROR(unexpected %v jump): To label %v \n%v\n", line, description, context.currentLabel, err)
 				}
 			}
 			context.detectImplicitJump = true
@@ -84,11 +85,9 @@ func Graph(text []string, options RenpyGraphOptions) (RenpyGraph, error) {
 			analytics.jumps++
 			g.AddNode(context.tags, context.currentLabel)
 			if len(context.labelStack) == 0 {
-				return g, fmt.Errorf("%v\nERROR(empty labelStack) context: %v\n%w", line, context.String(), ErrorParentNotFound)
+				log.Fatalf("---\n%v\nERROR(empty labelStack): on label %v\nContext: %v", line, context.currentLabel, context.String())
 			}
-			if err := g.AddEdge(context.tags, context.labelStack[len(context.labelStack)-1].labelName, context.currentLabel, context.lastChoice); err != nil {
-				return g, fmt.Errorf("%v\nERROR(unexpected pure jump) context: %v \n%w", line, context.String(), err)
-			}
+			g.AddEdge(context.tags, context.labelStack[len(context.labelStack)-1].labelName, context.currentLabel, context.lastChoice)
 
 		case situationCall:
 			analytics.calls++
@@ -104,7 +103,7 @@ func Graph(text []string, options RenpyGraphOptions) (RenpyGraph, error) {
 				context.tags.lowLink = true
 			}
 			if err := g.AddEdge(context.tags, fromLabel, context.currentLabel, context.lastChoice); err != nil {
-				return g, fmt.Errorf("%v\nERROR(unexpected %v call): To label %v \n%w", line, description, context.currentLabel, err)
+				fmt.Printf("---\n%v\nERROR(unexpected %v call): To label %v \n%v\n", line, description, context.currentLabel, err)
 			}
 			context.detectImplicitJump = true
 
@@ -123,8 +122,9 @@ func Graph(text []string, options RenpyGraphOptions) (RenpyGraph, error) {
 		case situationFromScreenToOther:
 			analytics.fromScreenToOther++
 			g.AddNode(context.tags, context.fromScreenToThis)
-			if err := g.AddEdge(context.tags, context.currentScreen, context.fromScreenToThis); err != nil {
-				return g, fmt.Errorf("%v\nERROR(unexpected jump from screen): on screen %v\nContext: %v\n%w", line, context.fromScreenToThis, context.String(), err)
+			err := g.AddEdge(context.tags, context.currentScreen, context.fromScreenToThis)
+			if err != nil {
+				log.Fatalf("---\n%v\nERROR(unexpected jump): on label %v\nContext: %v", line, context.fromScreenToThis, context.String())
 			}
 		}
 
@@ -136,7 +136,7 @@ func Graph(text []string, options RenpyGraphOptions) (RenpyGraph, error) {
 	if !g.Options.Silent {
 		fmt.Println(g.String())
 	}
-	return g, nil
+	return g
 }
 
 // updates the context according to a line of text and detectors

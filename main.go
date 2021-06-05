@@ -14,10 +14,7 @@ func main() {
 
 	content := parser.GetRenpyContent(path)
 
-	graph, err := parser.Graph(content, options)
-	if err != nil {
-		parser.DocumentIssue(err)
-	}
+	graph := parser.Graph(content, options)
 
 	graph.CreateFile("renpy-graphviz.dot")
 
