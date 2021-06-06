@@ -38,7 +38,7 @@ func initializeDetectors() customRegexes {
 		menu:              regexp.MustCompile(`^\s*menu.*:\s*(?:#.*)?$`),
 		spaces:            regexp.MustCompile(`^(\s*).*$`),
 		choice:            regexp.MustCompile(`^\s*(?:"(.*?[^\\])"|'(.*?[^\\])').*:\s*(?:#.*)?$`),
-		tags:              regexp.MustCompile(`(\w+)(?: *\( *(\w+)(?: *, *(\w+))? *\))?`), // https://regex101.com/r/1vvDF1/1
+		tags:              regexp.MustCompile(`(\w+)(?: *\( *([#\w]+)(?: *, *(\w+))? *\))?`), // https://regex101.com/r/1vvDF1/1
 	}
 }
 

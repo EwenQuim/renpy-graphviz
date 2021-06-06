@@ -115,6 +115,12 @@ func (g *RenpyGraph) AddNode(tags Tag, label string) {
 	} else if g.nodes[label].screen {
 		g.nodes[label].repr.Attrs("color", "blue", "style", "bold", "shape", "egg")
 	}
+	if tags.styles.color != "" {
+		g.nodes[label].repr.Attrs("color", tags.styles.color, "style", "bold")
+	}
+	if tags.styles.shape != "" {
+		g.nodes[label].repr.Attrs("shape", tags.styles.shape)
+	}
 
 }
 

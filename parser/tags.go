@@ -16,6 +16,8 @@ const (
 	attrFakeLabel   string = "FAKE_LABEL"
 	attrInGameJump  string = "INGAME_JUMP"
 	attrFakeJump    string = "FAKE_JUMP"
+	attrStyleColor  string = "COLOR"
+	attrStyleShape  string = "SHAPE"
 )
 
 // A Tag allows more control on the graph structure
@@ -38,6 +40,12 @@ type Tag struct {
 	screenToScreen    bool // jump from a screen to another
 	useScreenInScreen bool // usage of a screen inside another
 	screen            bool // this node is a screen
+	styles            TagStyles
+}
+
+type TagStyles struct {
+	color string
+	shape string
 }
 
 // handleTags detects tags in the given line. See Tag struct
@@ -82,6 +90,10 @@ func (context *Context) handleTags(line string, detect customRegexes) error {
 				context.tags.fakeJump = true
 				context.tagLabel = tagWithSubs[2]
 				context.tagJump = tagWithSubs[3]
+			case attrStyleColor:
+				context.tags.styles.color = tagWithSubs[2]
+			case attrStyleShape:
+				context.tags.styles.shape = tagWithSubs[2]
 			}
 		}
 	}

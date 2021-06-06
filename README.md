@@ -24,6 +24,7 @@ _Routes of the Question, the classic Ren'Py example_
     - [SKIPLINK](#skiplink)
     - [FAKE_LABEL(a) & FAKE_JUMP(a, b)](#fake_labela--fake_jumpa-b)
     - [INGAME_LABEL(a) & INGAME_JUMP(b)](#ingame_labela--ingame_jumpb)
+    - [SHAPE & COLOR](#shape--color)
   - [Limitations](#limitations)
   - [CONTRIBUTING](#contributing)
   - [LICENSE](#license)
@@ -72,13 +73,17 @@ label chapter_1: #renpy-graphviz: TITLE
 
 Before tags, you must write `renpy-graphviz` in a comment to ensure there are no collision with existing words in your VN. Here are the tags available:
 
-- [TITLE](#TITLE-&-Gameover): style for chapters
-- [BREAK](#BREAK): breaks the current flow, for parallel labels for example
-- [IGNORE](#IGNORE): ignores the current label. Jumps to this label still exist
-- [GAMEOVER](#TITLE-&-Gameover): style for endings
-- [SKIPLINK](#SKIPLINK): avoid long arrows by creating a "shortcut" - read the doc below before using
-- [FAKE_LABELS](#fake_labela--fake_jumpa-b): simulates labels and jumps
-- [INGAME_LABELS](#ingame_labela--ingame_jumpb): same but interacts with real label/jumps
+- BEHAVIOUR TAGS
+  - [BREAK](#BREAK): breaks the current flow, for parallel labels for example
+  - [IGNORE](#IGNORE): ignores the current label. Jumps to this label still exist
+  - [SKIPLINK](#SKIPLINK): avoid long arrows by creating a "shortcut" - read the doc below before using
+  - [FAKE_LABELS](#fake_labela--fake_jumpa-b): simulates labels and jumps
+  - [INGAME_LABELS](#ingame_labela--ingame_jumpb): same but interacts with real label/jumps
+- STYLE TAGS
+  - [TITLE](#TITLE-&-Gameover): style for chapters
+  - [GAMEOVER](#TITLE-&-Gameover): style for endings
+  - [SHAPE](#SHAPE-&-COLOR): set a shape
+  - [COLOR](#SHAPE-&-COLOR): set a color
 
 ### TITLE & GAMEOVER
 
@@ -322,6 +327,35 @@ label option_one:
 
 # jumps from `indirect_label` to `option_two`
     jump option_two
+```
+
+  </td>
+  </tr>
+</tbody>
+</table>
+
+### SHAPE & COLOR
+
+You can set yourself a custom color or shape for a label
+
+<table>
+<thead>
+  <tr>
+    <th>SHAPE and/or COLOR</th>
+    <th>script.rpy</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>
+  
+![](data/example-shape-color.png)
+  </td>
+    <td>
+
+```renpy
+label first: # renpy-graphviz: SHAPE(rect) COLOR(red)
+    jump second # renpy-graphviz: SHAPE(septagon) COLOR(#ffdd67)
 ```
 
   </td>

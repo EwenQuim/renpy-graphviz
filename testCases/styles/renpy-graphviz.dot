@@ -1,0 +1,7 @@
+digraph  {
+	
+	n1[color="#40e0d0",label="first",shape="rect"];
+	n2[color="green",label="second",shape="septagon"];
+	n1->n2;
+	
+}
