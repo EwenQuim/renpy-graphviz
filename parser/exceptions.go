@@ -10,6 +10,7 @@ import (
 )
 
 var ErrorParentNotFound = errors.New("parent label not found")
+var ErrorIngameTagIndent = errors.New("indentation given in INGAME_xxxx tag isn't correct")
 
 func DocumentIssue(err error) {
 	color.Red("An error occurred trying to make a graph out of your story.")
@@ -24,8 +25,9 @@ To know more about the issue,
 In the meantime, you'll see an incomplete version of your graph displayed.`)
 	color.Red(err.Error())
 
+	color.Set(color.Bold)
+
 	if errors.Is(err, ErrorParentNotFound) {
-		color.Set(color.Bold)
 		fmt.Println(`Not parent label/screen were found. This can be:
 - an indentation issue:
 
@@ -40,7 +42,7 @@ label parent: # renpy-graphviz: IGNORE
 	
 - a typo:
 
-label thing # <-- look, the ':' symbil is missing
+label thing # <-- look, the ':' symbol is missing
 
 - unindented text that do not belong to a label:
 
@@ -49,8 +51,13 @@ label parent:
 	"bla blah"
 "blah blah" # valid Ren'Py but should be indented as the previous lines
 jump somewhere`)
-		color.Unset()
+	} else if errors.Is(err, ErrorIngameTagIndent) {
+		fmt.Println(`The indentation given in the IN_GAME tag is not correct.
+INGAME_LABEL and INGAME_JUMP tags need and indentation level
+since they behave like real label/jumps`)
 	}
+	color.Unset()
+
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Press Enter to quit")
 	reader.ReadString('\n')

@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"strconv"
 	"strings"
 )
 
@@ -27,9 +28,10 @@ type Tag struct {
 	callLink          bool // style for call statement
 	gameOver          bool // renpy-graphviz: GAMEOVER tag
 	skipLink          bool // renpy-graphviz: SKIPLINK tag
-	inGameLabel       bool // renpy-graphviz: INGAME_LABEL(label_name) tag
+	inGameLabel       bool // renpy-graphviz: INGAME_LABEL(i, label_name) tag
+	inGameJump        bool // renpy-graphviz: INGAME_JUMP(i, to_label) tag
+	inGameIndent      int  // renpy-graphviz: INGAME indent tag
 	fakeLabel         bool // renpy-graphviz: FAKE_LABEL(label_name) tag
-	inGameJump        bool // renpy-graphviz: INGAME_JUMP(to_label) tag
 	fakeJump          bool // renpy-graphviz: FAKE_JUMP(from_label, to_label) tag
 	screenToLabel     bool // jump from a screen to a label
 	labelToScreen     bool // jump from a label to a screen
@@ -39,7 +41,7 @@ type Tag struct {
 }
 
 // handleTags detects tags in the given line. See Tag struct
-func (context *Context) handleTags(line string, detect customRegexes) {
+func (context *Context) handleTags(line string, detect customRegexes) error {
 	line = strings.ToLower(line)
 	if strings.Contains(line, "renpy-graphviz") {
 		lineStrings := strings.Split(line, "renpy-graphviz")
@@ -59,10 +61,20 @@ func (context *Context) handleTags(line string, detect customRegexes) {
 				context.tags.skipLink = true
 			case attrInGameLabel:
 				context.tags.inGameLabel = true
-				context.tagLabel = tagWithSubs[2]
+				indent, err := strconv.Atoi(tagWithSubs[2])
+				if err != nil {
+					return ErrorIngameTagIndent
+				}
+				context.tags.inGameIndent = indent
+				context.tagLabel = tagWithSubs[3]
 			case attrInGameJump:
 				context.tags.inGameJump = true
-				context.tagJump = tagWithSubs[2]
+				indent, err := strconv.Atoi(tagWithSubs[2])
+				if err != nil {
+					return ErrorIngameTagIndent
+				}
+				context.tags.inGameIndent = indent
+				context.tagJump = tagWithSubs[3]
 			case attrFakeLabel:
 				context.tags.fakeLabel = true
 				context.tagLabel = tagWithSubs[2]
@@ -73,4 +85,5 @@ func (context *Context) handleTags(line string, detect customRegexes) {
 			}
 		}
 	}
+	return nil
 }

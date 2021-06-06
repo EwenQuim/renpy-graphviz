@@ -43,7 +43,10 @@ func initializeDetectors() customRegexes {
 }
 
 // returns -1 if no submath were found
-func (c customRegexes) getIndent(line string) int {
+func (c customRegexes) getIndent(line string, tags Tag) int {
+	if tags.inGameLabel || tags.inGameJump {
+		return tags.inGameIndent
+	}
 	if c.comment.MatchString(line) {
 		return -1
 	}

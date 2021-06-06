@@ -14,25 +14,25 @@ func TestExampleGraphs(t *testing.T) {
 		options       RenpyGraphOptions
 		expectedGraph string
 	}{
-		// 		{"../testCases/tagsInGame", RenpyGraphOptions{Silent: true, ShowAtoms: true}, `
-		// digraph  {
+		{"../testCases/tagsInGame", RenpyGraphOptions{Silent: true, ShowAtoms: true}, `
+digraph  {
 
-		// 	n5[label="ending"];
-		// 	n6[color="purple",fontsize="16",label="FIRST",shape="rectangle",style="bold"];
-		// 	n4[label="indirect label"];
-		// 	n8[label="not indirect"];
-		// 	n2[label="option one"];
-		// 	n3[label="option two"];
-		// 	n7[label="second"];
-		// 	n1[label="start"];
-		// 	n6->n7[style="dotted"];
-		// 	n4->n3;
-		// 	n2->n4[style="dotted"];
-		// 	n3->n5;
-		// 	n1->n2;
-		// 	n1->n3;
+	n5[label="ending"];
+	n6[color="purple",fontsize="16",label="FIRST",shape="rectangle",style="bold"];
+	n4[label="indirect label"];
+	n8[label="not indirect"];
+	n2[label="option one"];
+	n3[label="option two"];
+	n7[label="second"];
+	n1[label="start"];
+	n6->n7[style="dotted"];
+	n4->n3;
+	n2->n4[style="dotted"];
+	n3->n5;
+	n1->n2;
+	n1->n3;
 
-		// }`},
+}`},
 		{"../testCases/tagsFake", RenpyGraphOptions{Silent: true, ShowAtoms: true}, `
 digraph  {
 

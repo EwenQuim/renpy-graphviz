@@ -53,7 +53,10 @@ func Graph(text []string, options RenpyGraphOptions) (RenpyGraph, error) {
 	for _, line := range text {
 
 		oldContext := context
-		context.update(line, detectors)
+		err := context.update(line, detectors)
+		if err != nil {
+			return g, fmt.Errorf("%v\nERROR(unexpected indent)\n%w", line, err)
+		}
 
 		g.logLineContext(line, context, oldContext)
 
@@ -140,12 +143,12 @@ func Graph(text []string, options RenpyGraphOptions) (RenpyGraph, error) {
 }
 
 // updates the context according to a line of text and detectors
-func (context *Context) update(line string, detect customRegexes) {
+func (context *Context) update(line string, detect customRegexes) error {
 	context.init()
 
-	context.handleTags(line, detect)
+	err := context.handleTags(line, detect)
 
-	context.indent = detect.getIndent(line)
+	context.indent = detect.getIndent(line, context.tags)
 	context.cleanContextAccordingToIndent(line)
 
 	// Handles keywords
@@ -253,6 +256,7 @@ func (context *Context) update(line string, detect customRegexes) {
 		default:
 		}
 	}
+	return err
 }
 
 // initialises the context object before reading a new line, with the context of the previous line

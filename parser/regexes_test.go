@@ -141,7 +141,7 @@ func TestGetIndent(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Detect indentation ", func(t *testing.T) {
-			indent := detect.getIndent(tc.line)
+			indent := detect.getIndent(tc.line, Tag{})
 
 			if indent != tc.indents {
 				t.Errorf("Error in indent test:\n got %+v\nwant %+v", indent, tc.indents)
