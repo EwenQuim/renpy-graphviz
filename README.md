@@ -60,7 +60,7 @@ _The command line version is more powerful as you can add flags and a path, see 
 ### Go library
 
 ```
-go get pkg.amethysts.studio/renpy-graphviz
+go install pkg.amethysts.studio/renpy-graphviz@latest
 ```
 
 If you are a Go user and want to integrate this in a Go lib/program, it is totally possible. The `/parser` module is very powerful.
