@@ -10,12 +10,11 @@ func getDefaultConfig() {
 	if err != nil {
 		log.Println("Creating default config...")
 		b := []byte(defaultConfig())
-		ioutil.WriteFile("renpy-graphviz.config", b, 0644)
+		ioutil.WriteFile("renpy-graphviz.config", b, 0o644)
 	}
 }
 
 func defaultConfig() string {
-
 	return `### RENPY-GRAPHVIZ TOOL CONFIGURATION ###
 # Select what you want to show and what you want to hide
 # Hiding everything isn't always very useful
