@@ -23,7 +23,7 @@ jobs:
       - name: Test package
         run: go test ./...
       - name: Build with xgo
-        uses: crazy-max/ghaction-xgo@v2.2.0
+        uses: crazy-max/ghaction-xgo@v2.4.0
         with:
           xgo_version: latest
           go_version: ${{ matrix.go_version }}
