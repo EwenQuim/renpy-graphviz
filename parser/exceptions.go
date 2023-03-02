@@ -10,7 +10,16 @@ import (
 )
 
 var ErrorParentNotFound = errors.New("parent label not found")
-var ErrorIngameTagIndent = errors.New("indentation given in INGAME_xxxx tag isn't correct")
+
+type ErrorIngameTagIndent struct {
+	tagType string // INGAME_LABEL or INGAME_JUMP
+	indent  int
+	err     error // underlying error, if any
+}
+
+func (e ErrorIngameTagIndent) Error() string {
+	return fmt.Sprintf("tag %s has an invalid indentation level: %d or an error: %s", e.tagType, e.indent, e.err)
+}
 
 func DocumentIssue(err error) {
 	color.Red("An error occurred trying to make a graph out of your story.")
@@ -51,7 +60,9 @@ label parent:
 	"bla blah"
 "blah blah" # valid Ren'Py but should be indented as the previous lines
 jump somewhere`)
-	} else if errors.Is(err, ErrorIngameTagIndent) {
+	}
+	var ingameTagIndent ErrorIngameTagIndent
+	if errors.As(err, &ingameTagIndent) {
 		fmt.Println(`The indentation given in the IN_GAME tag is not correct.
 INGAME_LABEL and INGAME_JUMP tags need and indentation level
 since they behave like real label/jumps`)
@@ -60,5 +71,8 @@ since they behave like real label/jumps`)
 
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Press Enter to quit")
-	reader.ReadString('\n')
+	_, err = reader.ReadString('\n')
+	if err != nil {
+		fmt.Printf("Couldn't read input: %s\n", err)
+	}
 }

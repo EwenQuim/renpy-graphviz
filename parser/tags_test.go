@@ -3,6 +3,8 @@ package parser
 import (
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestHandleTags(t *testing.T) {
@@ -33,10 +35,10 @@ func TestHandleTags(t *testing.T) {
 		// SKIPLINK
 		{8, " label truc: # renpY-grapHvIz: SKIPLINK", Tag{skipLink: true}},
 		// INGAME_LABEL
-		{9, " # renpy-graphviz: INGAME_LABEL(fake_label)", Tag{inGameLabel: true}},
+		{9, "# renpy-graphviz: INGAME_LABEL(0,fake_label)", Tag{inGameLabel: true, inGameIndent: 0}},
 		// INGAME_JUMP
-		{10, " # renpy-graphviz: INGAME_JUMP(to_label)", Tag{inGameJump: true}},
-		{10, " # renpy-graphviz: INGAME_JUMP ( to_label ) ", Tag{inGameJump: true}},
+		{10, " # renpy-graphviz: INGAME_JUMP(4,to_label)", Tag{inGameJump: true, inGameIndent: 4}},
+		{10, " # renpy-graphviz: INGAME_JUMP (8,  to_label ) ", Tag{inGameJump: true, inGameIndent: 8}},
 		// FAKE_LABEL
 		{11, " # renpy-graphviz: FAKE_LABEL(label_name)", Tag{fakeLabel: true}},
 		{11, " # renpy-graphviz: FAKE_LABEL(label_name)", Tag{fakeLabel: true}},
@@ -48,10 +50,9 @@ func TestHandleTags(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(fmt.Sprintf("Running test %v", tc.id), func(t *testing.T) {
 			context := Context{}
-			context.handleTags(tc.line, detect)
-			if context.tags != tc.updatedTag {
-				t.Errorf("Error in tags test %v:\n got %+v\nwant %+v", tc.id, context.tags, tc.updatedTag)
-			}
+			err := context.handleTags(tc.line, detect)
+			require.NoError(t, err, "Error in tags test %v", tc.id)
+			require.Equal(t, tc.updatedTag, context.tags, "Error in tags test %v", tc.id)
 		})
 	}
 }

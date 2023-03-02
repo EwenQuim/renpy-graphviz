@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEmptyGraph(t *testing.T) {
@@ -17,7 +19,6 @@ func TestEmptyGraph(t *testing.T) {
 	expectedGraph := RenpyGraph{}
 
 	graph.testGraphEquality(expectedGraph, t)
-
 }
 
 func TestUpdate(t *testing.T) {
@@ -32,58 +33,69 @@ func TestUpdate(t *testing.T) {
 	}{
 		// ------- Lines follow testing -------
 		// Basic label
-		{1, "label zero:",
+		{
+			1, "label zero:",
 			Context{},
 			Context{currentSituation: situationLabel, currentLabel: "zero", labelStack: []labelStack{{0, "zero"}}},
 		},
 		// Implicit jump
-		{2, "label first:",
+		{
+			2, "label first:",
 			Context{currentSituation: situationLabel, currentLabel: "zero"},
 			Context{currentSituation: situationLabel, currentLabel: "first", labelStack: []labelStack{{0, "first"}}},
 		},
 		// Context update as there is nothing
-		{3, "    useless line",
+		{
+			3, "    useless line",
 			Context{currentSituation: situationLabel, currentLabel: "first", detectImplicitJump: true, lastLabel: "zero", tags: Tag{lowLink: true}, labelStack: []labelStack{{0, "first"}}},
 			Context{currentSituation: situationPending, lastLabel: "zero", detectImplicitJump: true, labelStack: []labelStack{{0, "first"}}, indent: 4},
 		},
 		// Context transfer as there is nothing
-		{4, "    useless line again",
+		{
+			4, "    useless line again",
 			Context{currentSituation: situationPending, lastLabel: "first", detectImplicitJump: true, labelStack: []labelStack{{0, "first"}}, indent: 4},
 			Context{currentSituation: situationPending, lastLabel: "first", detectImplicitJump: true, labelStack: []labelStack{{0, "first"}}, indent: 4},
 		},
 		// Jumps
-		{5, "      jump second # and now jump!",
+		{
+			5, "      jump second # and now jump!",
 			Context{currentSituation: situationPending, lastLabel: "first", detectImplicitJump: true, labelStack: []labelStack{{0, "first"}}, indent: 4},
 			Context{currentSituation: situationJump, currentLabel: "second", labelStack: []labelStack{{0, "first"}}, indent: 6},
 		},
-		{6, "    useless line again and again",
+		{
+			6, "    useless line again and again",
 			Context{currentSituation: situationJump, currentLabel: "second", labelStack: []labelStack{{0, "first"}}, indent: 6},
 			Context{currentSituation: situationPending, detectImplicitJump: true, labelStack: []labelStack{{0, "first"}}, indent: 4},
 		},
 		// Call after the jump
-		{7, "    call third # and now call !",
+		{
+			7, "    call third # and now call !",
 			Context{currentSituation: situationPending, detectImplicitJump: true, labelStack: []labelStack{{0, "first"}}, indent: 4},
 			Context{currentSituation: situationCall, currentLabel: "third", labelStack: []labelStack{{0, "first"}, {4, "third"}}, detectImplicitJump: true, tags: Tag{callLink: true}, indent: 4},
 		},
 		// Call is now used as a previous label
-		{8, "    useless line again and again",
+		{
+			8, "    useless line again and again",
 			Context{currentSituation: situationCall, currentLabel: "third", labelStack: []labelStack{{0, "first"}, {4, "third"}}, detectImplicitJump: true, tags: Tag{callLink: true}, indent: 4},
 			Context{currentSituation: situationPending, lastLabel: "third", labelStack: []labelStack{{0, "first"}}, detectImplicitJump: true, indent: 4},
 		},
 		// Implicit jump after call
-		{9, "label truc(variable=0) : #test parsing",
+		{
+			9, "label truc(variable=0) : #test parsing",
 			Context{currentSituation: situationPending, lastLabel: "third", labelStack: []labelStack{{0, "first"}}, detectImplicitJump: true, indent: 4},
 			Context{currentSituation: situationLabel, currentLabel: "truc", lastLabel: "first", labelStack: []labelStack{{0, "truc"}}, detectImplicitJump: true},
 		},
 		// Return statement acts like BREAK
-		{10, "  return # breaks link",
+		{
+			10, "  return # breaks link",
 			Context{currentSituation: situationLabel, currentLabel: "truc", lastLabel: "first", labelStack: []labelStack{{0, "truc"}}, detectImplicitJump: true},
 			Context{labelStack: []labelStack{{0, "truc"}}, indent: 2},
 		},
 	}
 	for _, tc := range testCases {
 		t.Run("Test context.update(line)", func(t *testing.T) {
-			tc.context.update(tc.line, detectors)
+			err := tc.context.update(tc.line, detectors)
+			require.NoError(t, err, "failed to update context")
 
 			if tc.context.tags != tc.updatedContext.tags {
 				t.Errorf("Error in tags:\n got %+v\nwant %+v", tc.context.tags, tc.updatedContext.tags)
@@ -103,27 +115,39 @@ func TestInit(t *testing.T) {
 		expectedContext Context
 	}{
 		// Empty at the beginning and in most cases
-		{0, Context{},
+		{
+			0,
+			Context{},
 			Context{},
 		},
 		// Just after a label
-		{1, Context{currentSituation: situationLabel, currentLabel: "yo"},
+		{
+			1,
+			Context{currentSituation: situationLabel, currentLabel: "yo"},
 			Context{},
 		},
 		// Same
-		{2, Context{currentSituation: situationLabel, currentLabel: "second", lastLabel: "first"},
+		{
+			2,
+			Context{currentSituation: situationLabel, currentLabel: "second", lastLabel: "first"},
 			Context{lastLabel: "first"},
 		},
 		// Call situation similar to labelSituation
-		{3, Context{currentSituation: situationCall, currentLabel: "second", lastLabel: "first"},
+		{
+			3,
+			Context{currentSituation: situationCall, currentLabel: "second", lastLabel: "first"},
 			Context{lastLabel: "first"},
 		},
 		// Call situation where we go to an ending
-		{4, Context{currentSituation: situationCall, currentLabel: "ending", lastLabel: "first", tags: Tag{gameOver: true}},
+		{
+			4,
+			Context{currentSituation: situationCall, currentLabel: "ending", lastLabel: "first", tags: Tag{gameOver: true}},
 			Context{lastLabel: "first"},
 		},
 		// Jump situation where we go to an ending
-		{5, Context{currentSituation: situationJump, currentLabel: "ending", lastLabel: "first", tags: Tag{gameOver: true}},
+		{
+			5,
+			Context{currentSituation: situationJump, currentLabel: "ending", lastLabel: "first", tags: Tag{gameOver: true}},
 			Context{lastLabel: "first"},
 		},
 	}

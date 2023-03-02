@@ -1,16 +1,19 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
+	"os"
 )
 
 func getDefaultConfig() {
-	_, err := ioutil.ReadFile("renpy-graphviz.config")
+	_, err := os.ReadFile("renpy-graphviz.config")
 	if err != nil {
 		log.Println("Creating default config...")
 		b := []byte(defaultConfig())
-		ioutil.WriteFile("renpy-graphviz.config", b, 0o644)
+		err := os.WriteFile("renpy-graphviz.config", b, 0o644)
+		if err != nil {
+			log.Fatal("Couldn't create default config file. Please create a renpy-graphviz.config file manually.")
+		}
 	}
 }
 

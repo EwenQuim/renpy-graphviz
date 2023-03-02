@@ -41,7 +41,6 @@ type labelStack struct {
 // Graph creates a RenpyGraph from lines of script.
 // That's the main function
 func Graph(text []string, options RenpyGraphOptions) (RenpyGraph, error) {
-
 	g := NewGraph(options)
 
 	context := Context{}
@@ -117,7 +116,7 @@ func Graph(text []string, options RenpyGraphOptions) (RenpyGraph, error) {
 		case situationFakeJump:
 			g.AddNode(context.tags, context.tagLabel)
 			g.AddNode(context.tags, context.tagJump)
-			g.AddEdge(context.tags, context.tagLabel, context.tagJump, context.lastChoice)
+			_ = g.AddEdge(context.tags, context.tagLabel, context.tagJump, context.lastChoice)
 
 		case situationScreen:
 			analytics.screens++
@@ -153,7 +152,6 @@ func (context *Context) update(line string, detect customRegexes) error {
 
 	// Handles keywords
 	if !context.tags.ignore {
-
 		switch {
 
 		// BREAK -before COMMENTS cause this can be a tag-only line
@@ -246,7 +244,7 @@ func (context *Context) update(line string, detect customRegexes) error {
 
 		// CHOICE
 		case context.menuIndent < context.indent && detect.choice.MatchString(line):
-			context.lastChoice = detect.getChoice(line) //detect.choice.FindStringSubmatch(line)[1]
+			context.lastChoice = detect.getChoice(line) // detect.choice.FindStringSubmatch(line)[1]
 
 		// USUAL VN - DIALOGUES
 		case context.lastLabel != "" || len(context.labelStack) > 0:
@@ -261,7 +259,6 @@ func (context *Context) update(line string, detect customRegexes) error {
 
 // initialises the context object before reading a new line, with the context of the previous line
 func (context *Context) init() {
-
 	context.currentLabel = ""
 	context.currentSituation = situationPending
 	context.tagLabel = ""

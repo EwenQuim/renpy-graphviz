@@ -54,7 +54,7 @@ func (context *Context) handleTags(line string, detect customRegexes) error {
 	if strings.Contains(line, "renpy-graphviz") {
 		lineStrings := strings.Split(line, "renpy-graphviz")
 		endOfLine := strings.Join(lineStrings[1:], " ")                   // removes everything before `renpy-graphviz`
-		potentialTags := detect.tags.FindAllStringSubmatch(endOfLine, -1) //splitCharacters.Split(endOfLine, -1) // separate every word
+		potentialTags := detect.tags.FindAllStringSubmatch(endOfLine, -1) // splitCharacters.Split(endOfLine, -1) // separate every word
 		for _, tagWithSubs := range potentialTags {                       // sorts tags (false is default)
 			switch strings.ToUpper(tagWithSubs[1]) {
 			case attrIgnore:
@@ -71,7 +71,7 @@ func (context *Context) handleTags(line string, detect customRegexes) error {
 				context.tags.inGameLabel = true
 				indent, err := strconv.Atoi(tagWithSubs[2])
 				if err != nil {
-					return ErrorIngameTagIndent
+					return ErrorIngameTagIndent{"INGAME_LABEL", indent, err}
 				}
 				context.tags.inGameIndent = indent
 				context.tagLabel = tagWithSubs[3]
@@ -79,7 +79,7 @@ func (context *Context) handleTags(line string, detect customRegexes) error {
 				context.tags.inGameJump = true
 				indent, err := strconv.Atoi(tagWithSubs[2])
 				if err != nil {
-					return ErrorIngameTagIndent
+					return ErrorIngameTagIndent{"INGAME_JUMP", indent, err}
 				}
 				context.tags.inGameIndent = indent
 				context.tagJump = tagWithSubs[3]

@@ -3,8 +3,8 @@ package parser
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"math/rand"
+	"os"
 	"regexp"
 	"strings"
 	"unicode"
@@ -47,7 +47,7 @@ func NewGraph(options RenpyGraphOptions) RenpyGraph {
 }
 
 func randSeq(n int) string {
-	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	letters := []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	b := make([]rune, n)
 	for i := range b {
 		b[i] = letters[rand.Intn(len(letters))]
@@ -58,9 +58,7 @@ func randSeq(n int) string {
 var replaceBlanks = regexp.MustCompile("[)(_=]")
 
 func beautifyLabel(label string, tags Tag) string {
-	labelName := label
-
-	labelName = replaceBlanks.ReplaceAllString(label, " ")
+	labelName := replaceBlanks.ReplaceAllString(label, " ")
 
 	if tags.skipLink {
 		return labelName[:len(labelName)-5] + " *"
@@ -121,7 +119,6 @@ func (g *RenpyGraph) AddNode(tags Tag, label string) {
 	if tags.styles.shape != "" {
 		g.nodes[label].repr.Attrs("shape", tags.styles.shape)
 	}
-
 }
 
 // AddEdge to the renpy graph
@@ -173,7 +170,7 @@ func (g *RenpyGraph) AddEdge(tags Tag, label ...string) error {
 // Calls (renpyGraph).String to output file
 func (g *RenpyGraph) CreateFile(fileName string) error {
 	b := []byte(g.String())
-	return ioutil.WriteFile(fileName, b, 0644)
+	return os.WriteFile(fileName, b, 0o644)
 }
 
 // String returns a string with the graph description in dot language

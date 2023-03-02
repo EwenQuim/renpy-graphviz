@@ -1,16 +1,15 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
+	"os"
 
 	"github.com/goccy/go-graphviz"
 )
 
 func readDotFileToDrawGraph(pathToDotfile, imageName string) {
-
 	g := graphviz.New()
-	b, err := ioutil.ReadFile(pathToDotfile)
+	b, err := os.ReadFile(pathToDotfile)
 	if err != nil {
 		log.Fatal(err)
 	}
