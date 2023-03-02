@@ -1,0 +1,7 @@
+digraph  {
+	
+	n1[label="a"];
+	n2[label="b"];
+	n1->n2;
+	
+}

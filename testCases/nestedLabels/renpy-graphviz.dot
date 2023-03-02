@@ -9,16 +9,16 @@ digraph  {
 	n4[label="selfLoop"];
 	n5[label="third"];
 	n2[label="useless should be removed"];
-	n1->n2[arrowhead="diamond",label="",style="dotted"];
-	n1->n3[label="",style="dotted"];
-	n6->n7[label=""];
-	n6->n7[arrowhead="diamond",label="",style="dotted"];
-	n6->n8[label=""];
-	n7->n6[label=""];
-	n3->n4[arrowhead="diamond",label="",style="dotted"];
-	n3->n5[label=""];
+	n1->n2[arrowhead="diamond",style="dotted"];
+	n1->n3[style="dotted"];
+	n6->n7;
+	n6->n7[arrowhead="diamond",style="dotted"];
+	n6->n8;
+	n7->n6;
+	n3->n4[arrowhead="diamond",style="dotted"];
+	n3->n5;
 	n4->n4[label="repeat"];
-	n5->n6[arrowhead="diamond",label="",style="dotted"];
-	n5->n9[label=""];
+	n5->n6[arrowhead="diamond",style="dotted"];
+	n5->n9;
 	
 }

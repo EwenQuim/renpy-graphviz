@@ -1,0 +1,16 @@
+digraph  {
+	
+	n5[label="five"];
+	n4[label="four"];
+	n1[label="one"];
+	n6[label="six"];
+	n3[label="three"];
+	n2[label="two"];
+	n5->n6[style="dotted"];
+	n1->n2;
+	n1->n3;
+	n1->n4;
+	n1->n5;
+	n1->n2[style="dotted"];
+	
+}
