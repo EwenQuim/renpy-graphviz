@@ -2,9 +2,6 @@
 
 [![Go Reference](https://pkg.go.dev/badge/pkg.amethysts.studio/renpy-graphviz.svg)](https://pkg.go.dev/pkg.amethysts.studio/renpy-graphviz)
 [![Go Report Card](https://goreportcard.com/badge/pkg.amethysts.studio/renpy-graphviz)](https://goreportcard.com/report/pkg.amethysts.studio/renpy-graphviz)
-[![Link to online demo](https://img.shields.io/badge/try-online-purple)](https://renpy.amethysts.studio)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ewenquim/renpy-graphviz/Distribute%20executable)
-[![Coverage](http://gocover.io/_badge/pkg.amethysts.studio/renpy-graphviz)](http://gocover.io/pkg.amethysts.studio/renpy-graphviz)
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/ewenquim/renpy-graphviz?color=%23ff00ff&label=If%20you%20like%20renpy-graphviz%2C%20leave%20me%20a%20star%21&style=social)
 
@@ -23,10 +20,10 @@ _Routes of the Question, the classic Ren'Py example_
     - [BREAK](#break)
     - [IGNORE](#ignore)
     - [SKIPLINK](#skiplink)
-    - [FAKE_LABEL(a) & FAKE_JUMP(a, b)](#fake_labela--fake_jumpa-b)
-    - [INGAME_LABEL(i, a) & INGAME_JUMP(i, b)](#ingame_labeli-a--ingame_jumpi-b)
-    - [TITLE & GAMEOVER](#title--gameover)
-    - [SHAPE & COLOR](#shape--color)
+    - [FAKE\_LABEL(a) \& FAKE\_JUMP(a, b)](#fake_labela--fake_jumpa-b)
+    - [INGAME\_LABEL(i, a) \& INGAME\_JUMP(i, b)](#ingame_labeli-a--ingame_jumpi-b)
+    - [TITLE \& GAMEOVER](#title--gameover)
+    - [SHAPE \& COLOR](#shape--color)
   - [Limitations](#limitations)
   - [CONTRIBUTING](#contributing)
   - [LICENSE](#license)
@@ -45,7 +42,7 @@ _An extract from my personnal VN, [Coalescence](https://play.google.com/store/ap
 
 You can test this tool in the browser. If you really want to get `.png` files, please download the software version. Note that I will not maintain this website, it is not guaranteed to represent the library 100%.
 
-https://renpy.amethysts.studio
+https://ewenquim.github.io/renpy-graphviz
 
 ### Software version -install it on your computer
 
