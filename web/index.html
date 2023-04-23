@@ -1,0 +1,112 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Renpy Analyser</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script src="wasm_exec.js"></script>
+    <script>
+      const go = new Go();
+      WebAssembly.instantiateStreaming(
+        fetch("./main.wasm"),
+        go.importObject
+      ).then((result) => {
+        go.run(result.instance);
+      });
+    </script>
+  </head>
+  <body>
+    <header>
+      <h1 class="title">Renpy Analyser</h1>
+      <p>
+        This tool allows you to get a graph from a Ren'Py-made visual novel,
+        from any GitHub repo. If you don't use GitHub, you can download the
+        program with the link below!
+      </p>
+      <p>
+        Learn more and ⭐️ the
+        <a href="https://github.com/ewenQuim/renpy-graphviz">
+          project on Github !</a
+        >
+      </p>
+
+      <div id="search-bar">
+        <input
+          type="text"
+          name="fname"
+          id="repo"
+          placeholder="user/repository"
+        />
+        <span id="loader"></span>
+      </div>
+      <input type="checkbox" id="choices" name="choices" />
+      <label for="choices"> Display choices (experimental)</label><br />
+      <input type="checkbox" id="hideAtoms" name="hideAtoms" checked />
+      <label for="hideAtoms"> Hide lonely nodes</label><br />
+      <button id="triggerQuery">Demystify</button>
+
+      <details open>
+        <summary>
+          Here is a list of interesting stories, just try and see!
+        </summary>
+        <ul>
+          <li>
+            amethysts-studio/<strong>coalescence </strong><br />
+            <em> ↳ best example for the tool</em>
+          </li>
+          <li>
+            renpy/renpy/<strong>the_question</strong> <br />
+            <em> ↳ simple example (note that you can specify subpaths)</em>
+          </li>
+          <li>
+            judge2020/<strong>DokiDoki-Decompile</strong> <br />
+            <em> ↳ the famous DDLC</em>
+          </li>
+          <li>
+            SG-mancer/<strong>J-game</strong> <br />
+            <em> ↳ abusive use of `call` statements</em>
+          </li>
+          <hr />
+          <li>DeadSuperHero/<strong>rms-dating-simulator</strong></li>
+          <li>GinnyN/<strong>user-interface-game</strong></li>
+          <li>Lulufox/<strong>Moon_over_the_forest</strong></li>
+          <li>
+            Your own game !<br />
+            <em>
+              ↳ ask
+              <a
+                href="https://github.com/EwenQuim/renpy-graphviz/issues/new/choose"
+              >
+                here
+              </a>
+              if you want to see your game in the list
+            </em>
+          </li>
+        </ul>
+      </details>
+
+      <p id="errorMessage">Unable to access repo</p>
+
+      <em id="help">
+        Any issue ? Try reloading the page, or
+        <a href="https://github.com/EwenQuim/renpy-graphviz/issues/new">
+          raise an issue </a
+        >. Does not work on Safari, please change browser or download the
+        program.
+      </em>
+    </header>
+
+    <div id="graph" style="text-align: center"></div>
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
+    <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+
+    <script type="module">
+      import { getRepo } from "./renpy.js";
+
+      document
+        .querySelector("#triggerQuery")
+        .addEventListener("click", getRepo);
+    </script>
+  </body>
+</html>

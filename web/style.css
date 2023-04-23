@@ -1,0 +1,81 @@
+body {
+  font-family: Verdana, sans-serif;
+  margin: 0;
+}
+
+header {
+  position: sticky;
+  width: 30%;
+  min-height: 100%;
+  min-width: 400px;
+  background-color: lightgray;
+  padding: 2em;
+  z-index: 2;
+  background-image: linear-gradient(to top, #fad0c4 0%, #ffd1ff 100%);
+}
+
+#search-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  text-align: left;
+}
+
+#repo {
+  flex: 1;
+  margin-right: 2em;
+}
+
+#loader {
+  border: 3px solid #f3f3f3; /* Light grey */
+  border-top: 3px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  animation: spin 2s linear infinite;
+  display: block;
+  margin: auto;
+  margin-left: 1em;
+  visibility: hidden;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+#errorMessage {
+  visibility: hidden;
+  color: red;
+}
+
+#graph {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#graph > svg {
+  width: 100%;
+  height: 100%;
+}
+
+li > em,
+#help {
+  color: #333;
+  font-size: small;
+}
+
+details {
+  margin-top: 1em;
+}
+
+ul {
+  list-style-type: none;
+}
