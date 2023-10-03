@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./renpy-graphviz-logo.png"  height="200" alt="Ren'Py Graphviz" />
+</p>
+
 # Ren'Py graph visualizer - branches flowchart generator
 
 [![Go Reference](https://pkg.go.dev/badge/pkg.amethysts.studio/renpy-graphviz.svg)](https://pkg.go.dev/pkg.amethysts.studio/renpy-graphviz)
@@ -5,7 +9,7 @@
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/ewenquim/renpy-graphviz?color=%23ff00ff&label=If%20you%20like%20renpy-graphviz%2C%20leave%20me%20a%20star%21&style=social)
 
-## This is a tool written in Go that allows you to **visualize the routes** of your Ren'Py story
+This is a tool written in Go that allows you to **visualize the routes** of your Ren'Py story
 
 ![Routes of the Question Extract](./data/the_question.jpg)
 _Routes of the Question, the classic Ren'Py example_
@@ -16,7 +20,7 @@ _Routes of the Question, the classic Ren'Py example_
   - [Table of Contents](#table-of-contents)
   - [Examples](#examples)
   - [🔎 HOW TO USE?](#-how-to-use)
-    - [Online version - try online!](#online-version---try-online)
+    - [Online version - try online](#online-version---try-online)
     - [Software version -install it on your computer](#software-version--install-it-on-your-computer)
     - [Go library](#go-library)
   - [🏷 Tags](#-tags)
@@ -264,12 +268,12 @@ label first: # renpy-graphviz: SHAPE(rect) COLOR(red)
 
 Some examples of shapes and colors can be found here.
 
-Shapes | Colors
--------|-------
-Rectangle|Red
-Septagon|Blue
-Egg|Purple
-Diamond|White
+| Shapes    | Colors |
+| --------- | ------ |
+| Rectangle | Red    |
+| Septagon  | Blue   |
+| Egg       | Purple |
+| Diamond   | White  |
 
 `graph.go` file also supports line styling, font size and line thickness. Default values can also be changed inside the `graph.go` file.
 
