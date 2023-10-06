@@ -29,13 +29,32 @@
         >
       </p>
 
+      <div id="personnal-token">
+        <label>
+          <small>
+            Github Personnal Token (<a href="https://github.com/settings/tokens"
+              >get one</a
+            >)
+          </small>
+          <input
+            type="text"
+            name="personnalToken"
+            id="personnalToken"
+            placeholder="ghp_xxx"
+          />
+        </label>
+      </div>
+
       <div id="search-bar">
-        <input
-          type="text"
-          name="fname"
-          id="repo"
-          placeholder="user/repository"
-        />
+        <label for="">
+          <small>Repository</small>
+          <input
+            type="text"
+            name="fname"
+            id="repo"
+            placeholder="user/repository"
+          />
+        </label>
         <span id="loader"></span>
       </div>
       <input type="checkbox" id="choices" name="choices" />

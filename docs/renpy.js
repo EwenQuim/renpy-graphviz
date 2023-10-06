@@ -18,6 +18,8 @@ async function getRenpy(repoName, subPath) {
   var errorMessage = document.getElementById("errorMessage");
   errorMessage.style.visibility = "hidden";
 
+  const token = localStorage.getItem("personnalToken");
+
   var mainResponse;
   var renpyString = "";
   console.log("fetching start");
@@ -26,12 +28,22 @@ async function getRenpy(repoName, subPath) {
       "https://api.github.com/search/code?accept=application/vnd.github.v3+json&q=label+path:" +
         subPath +
         "+extension:rpy+repo:" +
-        repoName
+        repoName,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
     );
   } else {
     mainResponse = await fetch(
       "https://api.github.com/search/code?accept=application/vnd.github.v3+json&q=label+extension:rpy+repo:" +
-        repoName
+        repoName,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
     );
   }
 
@@ -100,6 +112,10 @@ export async function getRepo() {
   var [repoName, subPath] = getRepoStruct(
     document.getElementById("repo").value.trim()
   );
+  const personnalToken = document.getElementById("personnalToken").value.trim();
+  if (personnalToken) {
+    localStorage.setItem("personnalToken", personnalToken);
+  }
   console.log(repoName, subPath);
   const renpyTextList = await getRenpy(repoName, subPath);
   const graph = await printMessagePromise(
