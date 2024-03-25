@@ -3,7 +3,7 @@ module pkg.amethysts.studio/renpy-graphviz
 go 1.17
 
 require (
-	github.com/emicklei/dot v1.6.0
+	github.com/emicklei/dot v1.6.1
 	github.com/fatih/color v1.15.0
 	github.com/goccy/go-graphviz v0.1.1
 	github.com/pelletier/go-toml v1.9.5
