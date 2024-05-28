@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/emicklei/dot v1.6.2
 	github.com/fatih/color v1.17.0
-	github.com/goccy/go-graphviz v0.1.2
+	github.com/goccy/go-graphviz v0.1.3
 	github.com/pelletier/go-toml v1.9.5
 	github.com/sergi/go-diff v1.3.1
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
