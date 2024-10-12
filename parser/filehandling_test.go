@@ -6,7 +6,7 @@ import (
 )
 
 func TestGetRenpyContent(t *testing.T) {
-	result := GetRenpyContent("../testCases/simple")
+	result := GetRenpyContent("../testCases/simple", RenpyGraphOptions{})
 
 	expected := strings.Split(`label start:
     "Is my VN simple ?"
