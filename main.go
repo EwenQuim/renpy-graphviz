@@ -13,7 +13,7 @@ import (
 func main() {
 	path, options := PlugCLI()
 
-	content := parser.GetRenpyContent(path)
+	content := parser.GetRenpyContent(path, options)
 
 	graph, err := parser.Graph(content, options)
 	if err != nil {
