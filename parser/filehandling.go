@@ -11,8 +11,8 @@ import (
 
 // GetRenpyContent opens all renpy files and transform them into a string list
 // 1 line of script = 1 list element
-func GetRenpyContent(rootPath string) []string {
-	files, err := walkMatch(rootPath, "*.rpy")
+func GetRenpyContent(rootPath string, options RenpyGraphOptions) []string {
+	files, err := walkMatch(rootPath, "*.rpy", options.SkipFilesRegex)
 	if err != nil {
 		log.Fatalf("failed to find root folder: %s", err)
 	}
@@ -59,13 +59,21 @@ func GetRenpyContent(rootPath string) []string {
 	return fileTextLines
 }
 
-func walkMatch(root, pattern string) ([]string, error) {
+func walkMatch(root, pattern string, skipPattern string) ([]string, error) {
 	var matches []string
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 		if info.IsDir() {
+			return nil
+		}
+		if filepath.Base(path) == "test.rpy" {
+			println("foudn test rpy")
+		}
+		if matched, err := filepath.Match(skipPattern, filepath.Base(path)); err != nil {
+			return err
+		} else if matched {
 			return nil
 		}
 		if matched, err := filepath.Match(pattern, filepath.Base(path)); err != nil {

@@ -61,6 +61,8 @@ The command line version is more powerful as you can add flags and a path, see t
   - You might need to provide permissions, this program is not a virus. On Unix, run `chmod +x renpy-graphviz*`.
 - `renpy-graphviz.png` should appear, **enjoy**!
 
+Use the boolean flags only in `-flag=value` format, not in `-flag value ` format, e.g. use `./renpy-graphviz -open=false`.
+
 ### Go library
 
 ```cmd

@@ -31,13 +31,14 @@ type RenpyGraph struct {
 
 // RenpyGraphOptions are options that can be set to make a more customizable graph
 type RenpyGraphOptions struct {
-	ShowEdgesLabels   bool // Show Labels on Edges? Can be unreadable but there is more information
-	ShowAtoms         bool // Show lonely nodes ? Might be useful but useless most of the time - and it avoids writing IGNORE tag everywhere
-	ShowScreens       bool // Show screens ?
-	ShowNestedScreens bool // Show nested screens (`use` keyword)
-	Silent            bool // Display .dot graph in the stdout
-	OpenFile          bool // Open the image in the default image viewer or not ?
-	FullDebug         bool // Show all lines and updates
+	ShowEdgesLabels   bool   // Show Labels on Edges? Can be unreadable but there is more information
+	ShowAtoms         bool   // Show lonely nodes ? Might be useful but useless most of the time - and it avoids writing IGNORE tag everywhere
+	ShowScreens       bool   // Show screens ?
+	ShowNestedScreens bool   // Show nested screens (`use` keyword)
+	Silent            bool   // Display .dot graph in the stdout
+	OpenFile          bool   // Open the image in the default image viewer or not ?
+	FullDebug         bool   // Show all lines and updates
+	SkipFilesRegex    string // Skip all files matching this regex
 }
 
 // NewGraph creates an empty graph

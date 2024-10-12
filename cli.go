@@ -10,6 +10,11 @@ import (
 	"pkg.amethysts.studio/renpy-graphviz/parser"
 )
 
+// isFlag checks if a string is a flag (starts with a dash)
+func isFlag(arg string) bool {
+	return len(arg) > 0 && arg == "-"
+}
+
 // PlugCLI handles the Command Line Interface
 func PlugCLI() (string, parser.RenpyGraphOptions) {
 
@@ -31,6 +36,7 @@ func PlugCLI() (string, parser.RenpyGraphOptions) {
 	var hideScreens bool
 	var hideNestedScreens bool
 	var fullDebug bool
+	var skipFilesRegex string
 
 	// TOML
 	getDefaultConfig()
@@ -45,6 +51,7 @@ func PlugCLI() (string, parser.RenpyGraphOptions) {
 		hideNestedScreens = !config.Get("config.nested-screens").(bool)
 		silent = config.Get("config.silent").(bool)
 		fullDebug = config.Get("config.debug").(bool)
+		skipFilesRegex = config.Get("config.skip-files").(string)
 	}
 
 	// CLI overrides TOML
@@ -55,13 +62,17 @@ func PlugCLI() (string, parser.RenpyGraphOptions) {
 	flag.BoolVar(&hideScreens, "hide-screens", hideScreens, "Hide screens")
 	flag.BoolVar(&hideNestedScreens, "hide-nested", hideNestedScreens, "Hide nested screens")
 	flag.BoolVar(&fullDebug, "debug", fullDebug, "Debug")
+	flag.StringVar(&skipFilesRegex, "skip-files", skipFilesRegex, "Regex pattern for excluding files")
 
-	flag.Parse()
-
-	path := "."
-	if len(flag.Args()) > 0 {
-		path = flag.Args()[0]
+	// Manually handle the non-flag argument
+	var path string
+	if len(os.Args) > 1 && !isFlag(os.Args[1]) {
+		path = os.Args[1]
+		os.Args = append(os.Args[:1], os.Args[2:]...) // Remove the non-flag argument from os.Args
+	} else {
+		path = "."
 	}
+	flag.Parse()
 	return path, parser.RenpyGraphOptions{
 		ShowEdgesLabels:   !hideEdgesLabels,
 		ShowAtoms:         showAtoms,
@@ -69,5 +80,7 @@ func PlugCLI() (string, parser.RenpyGraphOptions) {
 		OpenFile:          openFile,
 		ShowScreens:       !hideScreens,
 		ShowNestedScreens: !hideNestedScreens,
-		FullDebug:         fullDebug}
+		FullDebug:         fullDebug,
+		SkipFilesRegex:    skipFilesRegex,
+	}
 }

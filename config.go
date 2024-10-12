@@ -51,6 +51,9 @@ silent = false # default: false
 # Debug mode
 debug = false # default: false
 
+# Regex for skipping files
+skip-files = "" # default: ""
+
 ### You can edit ↑ above ↑
 
 ### HOW TO USE THE PROGRAM? ###
