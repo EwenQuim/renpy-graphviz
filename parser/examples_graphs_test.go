@@ -194,7 +194,7 @@ digraph  {
 	r := strings.NewReplacer(" ", "", "\t", "", "\n", "")
 	for _, tc := range testCases {
 		t.Run(tc.pathToScript, func(t *testing.T) {
-			renpyLines := GetRenpyContent(tc.pathToScript)
+			renpyLines := GetRenpyContent(tc.pathToScript, tc.options)
 			graphResult, err := Graph(renpyLines, tc.options)
 			require.NoError(t, err)
 
