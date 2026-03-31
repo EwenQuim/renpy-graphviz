@@ -7,7 +7,7 @@ require (
 	github.com/fatih/color v1.18.0
 	github.com/goccy/go-graphviz v0.1.3
 	github.com/pelletier/go-toml v1.9.5
-	github.com/sergi/go-diff v1.3.1
+	github.com/sergi/go-diff v1.4.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	github.com/stretchr/testify v1.9.0
 )
